@@ -1,0 +1,88 @@
+@import './../../utils/colors.sass'
+
+.wrapper
+	min-height: calc( 100vh - 170px )
+.title
+	color: $base-color
+	text-align: center
+	margin-bottom: 50px
+	font-size: 40px
+	font-weight: 600
+.top
+	display: flex
+	justify-content: space-between
+	align-items: center
+	margin-bottom: 30px
+.btns
+	display: inline-flex
+	gap: 15px
+	align-items: center
+	img
+		max-width: 100%
+.btn
+	border: 2px solid $base-color
+	border-radius: 36px
+	padding: 8px 10px
+	background: none
+	cursor: pointer
+	&__back
+		height: 100%
+		position: relative
+		padding: 8px 10px
+		width: 36px
+		height: 36px
+		img
+			position: absolute
+			width: 100%
+			height: 100%
+			top: 0
+			left: 0
+			// object-fit: cover
+	&__create
+		font-weight: 400
+		font-size: 14px
+		line-height: 16px
+		color: $base-color
+.label
+	display: inline-flex
+	flex-direction: column
+	align-items: center
+	justify-content: center
+	border: 2px dashed $base-color
+	border-radius: 37px
+	padding: 8px 10px
+	background: none
+	cursor: pointer
+	input
+		display: none
+
+.drag
+	border: 6px dashed $base-color
+	border-radius: 15px
+	color: $base-color
+	width: calc( 100% - 0px )
+	height: calc( 100vh - 200px)
+	font-size: 52px
+	font-weight: 600
+	display: flex
+	align-items: center
+	justify-content: center
+.loader
+	display: flex
+	align-items: center
+	justify-content: center
+	height: calc( 100vh - 61px )
+.views
+	display: flex
+	gap: 10px
+.sortBlock
+	select
+		cursor: pointer
+		font-size: 20px
+
+.viewBtns
+	img
+		width: 20px
+		height: 20px
+.plateBtn
+.listBtn
