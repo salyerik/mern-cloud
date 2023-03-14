@@ -1,7 +1,10 @@
 import * as uuid from 'uuid'
 import { hideLoader } from '../reducers/appReducer'
 import { addFile, fileDelete, setFiles } from '../reducers/fileReducer'
-import { changeFileProgress, uploadFile as uploadFileAC } from '../reducers/uploadReducer'
+import {
+	changeFileProgress,
+	uploadFile as uploadFileAC
+} from '../reducers/uploadReducer'
 import axiosInstance from '../utils/axios'
 import { SSE } from '../utils/configs'
 
@@ -47,7 +50,13 @@ const uploadFile = (file, parent) => async dispatch => {
 		const id = uuid.v1()
 		function progressHandler(fileSizeInMB) {
 			for (let i = fileSizeInMB; i > 0; i--) {
-				setTimeout(() => dispatch(changeFileProgress(id, Math.round(100 / (fileSizeInMB / i)))), i * 1000)
+				setTimeout(
+					() =>
+						dispatch(
+							changeFileProgress(id, Math.round(100 / (fileSizeInMB / i)))
+						),
+					i * 1000
+				)
 			}
 		}
 		dispatch(uploadFileAC({ id, name: file.name, progress: 0 }))
@@ -78,13 +87,16 @@ const uploadFile = (file, parent) => async dispatch => {
 
 const downloadFile = async (id, name) => {
 	try {
-		const { status, data } = await axiosInstance(`file/download?id=${id}`, { responseType: 'blob' })
+		const { status, data } = await axiosInstance(`file/download?id=${id}`, {
+			responseType: 'json'
+		})
 		if (status === 200) {
 			const link = document.createElement('a')
-			link.href = URL.createObjectURL(data)
-			link.download = name
+			// link.href = URL.createObjectURL(data)
+			link.href = data
+			// link.download = name
 			link.target = '_blank'
-			document.body.appendChild(link)
+			// document.body.appendChild(link)
 			link.click()
 			link.remove()
 		}
