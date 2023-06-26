@@ -17,5 +17,5 @@
 
 [BackEnd Repository ⬅️][link2]
 
-[link]: https://steterik.github.io/mernCloud
-[link2]: https://steterik.github.io/mernCloudServer
+[link]: https://steterik.github.io/mern-cloud
+[link2]: https://steterik.github.io/mern-cloud-api
