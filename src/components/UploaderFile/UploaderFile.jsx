@@ -1,18 +1,15 @@
-import { useDispatch } from 'react-redux'
-import { hideFile } from '../../reducers/uploadReducer'
-import s from './UploaderFile.module.sass'
+import { useDispatch } from 'react-redux';
+import { hideFile } from '../../reducers/uploadReducer';
+import s from './UploaderFile.module.sass';
+import { nameCutter } from '../../utils/helpers';
 
 const UploaderFile = ({ file }) => {
-	const dispatch = useDispatch()
-	const closeBtnHandler = () => {
-		dispatch(hideFile(file.id))
-	}
-
+	const dispatch = useDispatch();
 	return (
 		<section className={s.wrapper}>
 			<div className={s.header}>
-				<span className={s.name}>{file.name}</span>
-				<button onClick={closeBtnHandler} className={s.close}>
+				<span className={s.name}>{nameCutter(file.name, 24)}</span>
+				<button onClick={() => dispatch(hideFile(file.id))} className={s.close}>
 					X
 				</button>
 			</div>
@@ -21,7 +18,7 @@ const UploaderFile = ({ file }) => {
 				<span className={s.percent}>{file.progress}%</span>
 			</div>
 		</section>
-	)
-}
+	);
+};
 
-export default UploaderFile
+export default UploaderFile;

@@ -1,4 +1,4 @@
-import s from './Loader.module.sass'
+import s from './Loader.module.sass';
 
 const Loader = () => (
 	<div className={s.ldsRoller}>
@@ -11,6 +11,6 @@ const Loader = () => (
 		<div></div>
 		<div></div>
 	</div>
-)
+);
 
-export default Loader
+export default Loader;

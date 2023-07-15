@@ -1,50 +1,67 @@
-import { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-import Input from '../Input'
-import { authPost } from '../../actions/user'
-import s from './Authorization.module.sass'
+import Input from '../UI/Input';
+import { authPost } from '../../services/user';
+import s from './Authorization.module.sass';
+import useInput from '../../hooks/useInput';
 
 const Authorization = () => {
-	const dispatch = useDispatch()
-	const navigate = useNavigate()
-	const { pathname } = useLocation()
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+	const { pathname } = useLocation();
+	const [isLoginPage, setLoginPage] = useState(true);
 
-	const [isLogin, setLogin] = useState(true)
-	const [firstName, setFirstName] = useState('')
-	const [lastName, setLastName] = useState('')
-	const [email, setEmail] = useState('')
-	const [password, setPassword] = useState('')
+	const firstName = useInput('');
+	const lastName = useInput('');
+	const email = useInput('');
+	const password = useInput('');
 
-	useEffect(() => setLogin(pathname.includes('login')), [pathname])
+	useEffect(() => setLoginPage(pathname.includes('login')), [pathname]);
 
-	const btnHandler = () => {
-		dispatch(authPost(firstName, lastName, email, password, isLogin ? 'login' : 'registration', navigate))
-	}
+	const authHandler = () => {
+		dispatch(
+			authPost(
+				firstName.value,
+				lastName.value,
+				email.value,
+				password.value,
+				isLoginPage ? 'login' : 'register',
+				navigate,
+			),
+		);
+	};
 
 	return (
 		<section className={s.wrapper}>
-			<div className={s.block}>
-				<h2 className={s.title}>{isLogin ? 'Login' : 'Registration'}</h2>
-				{!isLogin && (
-					<>
-						<Input type={'text'} value={firstName} setValue={setFirstName} placeholder={'First Name'} />
-						<Input type={'text'} value={lastName} setValue={setLastName} placeholder={'Last Name'} />
-					</>
-				)}
-				<Input type={'email'} value={email} setValue={setEmail} placeholder={'E-Mail'} />
-				<Input type={'password'} value={password} setValue={setPassword} placeholder={'Password'} />
-				<div className={s.middle}>
-					<span>{isLogin ? 'Do not have account?' : 'Already have account?'}</span>
-					<Link to={isLogin ? '/auth/registration' : '/auth/login'}>{isLogin ? 'Sign Up' : 'Sign In'}</Link>
+			<div className={s.top}>
+				<div className={s.block}>
+					<h2 className={s.title}>{isLoginPage ? 'Login' : 'Register'}</h2>
+					{!isLoginPage && (
+						<>
+							<Input placeholder={'First Name'} {...firstName} />
+							<Input placeholder={'Last Name'} {...lastName} />
+						</>
+					)}
+					<Input type={'email'} placeholder={'E-Mail'} {...email} />
+					<Input type={'password'} placeholder={'Password'} {...password} />
+					<div className={s.middle}>
+						<span>
+							{isLoginPage ? 'Do not have account?' : 'Already have account?'}
+						</span>
+						<Link to={isLoginPage ? '/auth/register' : '/auth/login'}>
+							{isLoginPage ? 'Sign Up' : 'Sign In'}
+						</Link>
+					</div>
+					<button className={s.btn} onClick={authHandler}>
+						{isLoginPage ? 'Sign In' : 'Sign Up'}
+					</button>
 				</div>
-				<button className={s.btn} onClick={btnHandler}>
-					{isLogin ? 'Sign In' : 'Sign Up'}
-				</button>
 			</div>
+			<div className={s.bottom}>Please authorized to store your files!</div>
 		</section>
-	)
-}
+	);
+};
 
-export default Authorization
+export default Authorization;

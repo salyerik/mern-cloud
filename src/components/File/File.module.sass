@@ -14,26 +14,26 @@
 		.delete
 			display: block
 .img
-	flex: 0 1 80px
+	flex: 0 0 80px
 	padding: 0 10px
 	max-width: 100%
 	cursor: pointer
 	img
 		max-width: 100%
 .name
-	flex: 1 0 auto
+	flex: 1 1 auto
 	text-align: left
 	font-size: 18px
 	line-height: 21px
 	color: #444
 	margin: 0 20px
 	cursor: pointer
+	overflow: hidden
 .date,
 .size,
 .download,
 .delete
 	flex: 0 0 120px
-
 .size
 
 .download,
@@ -47,16 +47,20 @@
 	cursor: pointer
 	display: none
 
+.deleteActive
+	color: red
+	border-color: red
+	opacity: 0.3
+	cursor: default
+
 .plate
 	display: flex
 	color: #444
 	transition: .2s
 	flex-direction: column
 	align-items: center
-	justify-content: center
-	flex: 0 0 12.5%
-	overflow-x: hidden
-	padding: 3px 6px
+	flex: 0 0 168px
+	flex-wrap: wrap
 	&:hover
 		cursor: pointer
 		transform: scale(1.01)

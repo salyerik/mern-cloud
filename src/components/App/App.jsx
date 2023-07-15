@@ -1,45 +1,38 @@
-import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { useSelector } from 'react-redux'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import { auth } from '../../actions/user'
-import About from '../About'
-import Disk from '../Disk'
-import NavBar from '../NavBar'
-import Profile from '../Profile'
-import Authorization from './../Authorization'
-import './App.sass'
+import { auth } from '../../services/user';
+import { authRoutes, notAuthRoutes } from '../../utils/routes';
+import NavBar from '../NavBar';
+import Loader from '../UI/Loader/Loader';
+import './App.sass';
 
 const App = () => {
-	const { isAuth } = useSelector(state => state.user)
-	const dispatch = useDispatch()
+	const isAuth = useSelector(state => state.user.isAuth);
+	const dispatch = useDispatch();
+	const [routes, setRoutes] = useState(null);
 
 	useEffect(() => {
-		dispatch(auth())
-	}, [])
+		dispatch(auth());
+		setRoutes(isAuth ? authRoutes : notAuthRoutes);
+	}, [isAuth]);
+
+	if (!routes) return <Loader />;
 
 	return (
 		<BrowserRouter>
 			<div className='container'>
 				<NavBar />
-				{!isAuth ? (
-					<Routes>
-						<Route path='/auth/login' element={<Authorization />} />
-						<Route path='/auth/registration' element={<Authorization />} />
-						<Route path='/about' element={<About />} />
-						<Route path='*' element={<Authorization />} />
-					</Routes>
-				) : (
-					<Routes>
-						<Route path='/file' element={<Disk />} />
-						<Route path='/profile' element={<Profile />} />
-						<Route path='*' element={<Disk />} />
-					</Routes>
-				)}
+				<Routes>
+					{routes.map((route, i) => (
+						<Route key={i} path={route.path} element={<route.element />} />
+					))}
+				</Routes>
 			</div>
 		</BrowserRouter>
-	)
-}
+	);
+};
 
-export default App
+export default App;
