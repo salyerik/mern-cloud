@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import Input from '../UI/Input';
-import { authPost } from '../../services/user';
+import { authPost } from '../../services/user-service';
 import s from './Authorization.module.sass';
 import useInput from '../../hooks/useInput';
 
@@ -28,8 +28,8 @@ const Authorization = () => {
 				email.value,
 				password.value,
 				isLoginPage ? 'login' : 'register',
-				navigate,
-			),
+				navigate
+			)
 		);
 	};
 
@@ -59,7 +59,7 @@ const Authorization = () => {
 					</button>
 				</div>
 			</div>
-			<div className={s.bottom}>Please authorized to store your files!</div>
+			<div className={s.bottom}>Please authorized to store your files.</div>
 		</section>
 	);
 };

@@ -6,10 +6,9 @@ const defaultState = { isAuth: false, currentUser: {} };
 const userReducer = (state = defaultState, { type, payload }) => {
 	switch (type) {
 		case SET_USER:
-			return { ...state, isAuth: true, currentUser: payload };
+			return { isAuth: true, currentUser: payload };
 		case LOG_OUT:
-			localStorage.removeItem('token');
-			return { ...state, isAuth: false, currentUser: {} };
+			return { isAuth: false, currentUser: {} };
 		default:
 			return { ...state };
 	}

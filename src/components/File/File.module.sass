@@ -30,15 +30,12 @@
 	cursor: pointer
 	overflow: hidden
 .date,
-.size,
-.download,
-.delete
-	flex: 0 0 120px
 .size
+	flex: 0 0 120px
 
 .download,
 .delete
-	margin: 0 15px
+	margin: 0 10px
 	padding: 5px
 	background: none
 	border: 2px dashed #444
@@ -46,13 +43,19 @@
 	border-radius: 20px
 	cursor: pointer
 	display: none
+	flex: 0 0 95px
 
+.downloadDisabled,
 .deleteActive
 	color: red
 	border-color: red
 	opacity: 0.3
 	cursor: default
-
+.downloadActive
+	color: green
+	border-color: green
+	cursor: default
+	opacity: 1
 .plate
 	display: flex
 	color: #444
@@ -64,7 +67,8 @@
 	&:hover
 		cursor: pointer
 		transform: scale(1.01)
-		.plate__btns
+		.download,
+		.delete
 			visibility: visible
 			opacity: 1
 	&__img
@@ -82,12 +86,12 @@
 	&__btns
 		display: flex
 		gap: 4px
+		button
+	&__download,
+	&__delete
+		border-radius: 10px
+		margin: 0
+		flex: 1 1 auto
 		visibility: hidden
 		opacity: 0
-		button
-			border: 2px solid #444
-			border-radius: 10px
-			padding: 3px 6px
-	&__download
-
-	&__delete
+		display: block

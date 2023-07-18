@@ -1,19 +1,15 @@
 import { setUser } from '../reducers/userReducer';
 import axiosInstance from '../http/axios';
+import { MB } from '../utils/config';
 
 const authPost =
 	(firstName, lastName, email, password, path, navigate) => async dispatch => {
 		try {
-			const { data } = await axiosInstance.post('auth/' + path, {
-				firstName,
-				lastName,
-				email,
-				password,
-			});
+			const body = { firstName, lastName, email, password };
+			const { data } = await axiosInstance.post('auth/' + path, body);
 			localStorage.setItem('token', data.token);
 			dispatch(setUser(data.user));
 			navigate('/file');
-			if (path === 'register') alert('Register completed successfully');
 		} catch (error) {
 			alert(error.response.data);
 		}
@@ -34,13 +30,14 @@ const auth = () => async dispatch => {
 
 const uploadAvatar = (file, setUpdating) => async dispatch => {
 	try {
-		if (file.size < 2000001) {
-			const formData = new FormData();
-			formData.append('file', file);
-			const { data } = await axiosInstance.post('file/avatar', formData);
-			dispatch(setUser(data.user));
-			localStorage.setItem('token', data.token);
-		} else alert('Picture size must be less than 2mb');
+		if (file.size > 2 * MB) {
+			return alert('Picture size must be less than 2mb');
+		}
+		const formData = new FormData();
+		formData.append('file', file);
+		const { data } = await axiosInstance.post('file/avatar', formData);
+		dispatch(setUser(data.user));
+		localStorage.setItem('token', data.token);
 	} catch (error) {
 		alert(error.response.data);
 	} finally {
@@ -50,11 +47,12 @@ const uploadAvatar = (file, setUpdating) => async dispatch => {
 
 const deleteAvatar = avatar => async dispatch => {
 	try {
-		if (avatar) {
-			const { data } = await axiosInstance.delete('file/avatar');
-			dispatch(setUser(data.user));
-			localStorage.setItem('token', data.token);
+		if (!avatar) {
+			throw new Error('Avatar error');
 		}
+		const { data } = await axiosInstance.delete('file/avatar');
+		dispatch(setUser(data.user));
+		localStorage.setItem('token', data.token);
 	} catch (error) {
 		alert(error.response.data);
 	}

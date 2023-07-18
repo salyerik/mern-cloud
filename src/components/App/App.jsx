@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import { auth } from '../../services/user';
+import { auth } from '../../services/user-service';
 import { authRoutes, notAuthRoutes } from '../../utils/routes';
 import NavBar from '../NavBar';
 import Loader from '../UI/Loader/Loader';

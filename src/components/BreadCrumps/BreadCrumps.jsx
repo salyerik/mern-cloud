@@ -10,17 +10,17 @@ const BreadCrumps = ({ currentDir, dirStack, firstName }) => {
 	const dispatch = useDispatch();
 
 	const changeFolderHandler = dir => {
-		if (!dir.id) dispatch(resetStack());
-		else {
-			const newStack = [];
-			for (let i = 0; i < dirStack.length; i++) {
-				const stackDir = dirStack[i];
-				if (dir.id === stackDir.id) break;
-				newStack.push(stackDir);
-			}
-			dispatch(setCurrentDir(dir));
-			dispatch(updateStack(newStack));
+		if (!dir.id) {
+			return dispatch(resetStack());
 		}
+		const newStack = [];
+		for (let i = 0; i < dirStack.length; i++) {
+			const stackDir = dirStack[i];
+			if (dir.id === stackDir.id) break;
+			newStack.push(stackDir);
+		}
+		dispatch(setCurrentDir(dir));
+		dispatch(updateStack(newStack));
 	};
 
 	return (

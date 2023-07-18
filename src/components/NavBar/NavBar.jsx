@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { searchFile } from '../../services/file';
+import { searchFile } from '../../services/file-service';
 import { showLoader } from '../../reducers/appReducer';
 import { logOut } from '../../reducers/userReducer';
 import { resetStack } from '../../reducers/fileReducer';
@@ -39,7 +39,7 @@ function NavBar() {
 		setSearchTimeout(
 			setTimeout(() => {
 				dispatchSearch(e.target.value);
-			}, 500),
+			}, 500)
 		);
 	}
 
@@ -47,6 +47,11 @@ function NavBar() {
 		setSearchValue('');
 		dispatchSearch();
 		setSearchActive(false);
+	}
+
+	function logoutHandler() {
+		localStorage.removeItem('token');
+		dispatch(logOut());
 	}
 
 	return (
@@ -73,7 +78,7 @@ function NavBar() {
 								onFocus={searchVisibilityHandler}
 								onBlur={searchVisibilityHandler}
 								className={[s.search, isSearchActive ? s.active : ''].join(
-									' ',
+									' '
 								)}>
 								<img src={searchIcon} alt='searchIcon' />
 								<input
@@ -92,7 +97,7 @@ function NavBar() {
 							<img className={s.img} src={avatar || avatarIcon} alt='avatar' />
 							<span className={s.link}>Profile</span>
 						</Link>
-						<button className={s.link} onClick={() => dispatch(logOut())}>
+						<button className={s.link} onClick={logoutHandler}>
 							Sign Out
 						</button>
 					</>

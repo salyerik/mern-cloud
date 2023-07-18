@@ -1,7 +1,15 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useState } from 'react';
-import { deleteFile, downloadFile, getFileUrl } from '../../services/file';
-import { pushToStack, setCurrentDir } from '../../reducers/fileReducer';
+import { useEffect, useState } from 'react';
+import {
+	deleteFile,
+	downloadFile,
+	getFileUrl,
+} from '../../services/file-service';
+import {
+	pushToStack,
+	resetDownloadProgress,
+	setCurrentDir,
+} from '../../reducers/fileReducer';
 
 import sizeFormat from '../../utils/size-format';
 import { nameCutter } from '../../utils/helpers';
@@ -15,21 +23,33 @@ const File = ({ file }) => {
 	const [isDeleteClicked, setDeleteClicked] = useState(false);
 	const { currentDir, view } = useSelector(state => state.file);
 
+	useEffect(() => {
+		if (file.downloadProgress) setDeleteClicked(true);
+		if (file.downloadProgress === '100') {
+			setTimeout(() => {
+				dispatch(resetDownloadProgress(file._id));
+				setDeleteClicked(false);
+			}, [1000]);
+		}
+	}, [file.downloadProgress]);
+
 	const openDirHandler = () => {
-		if (file.type === 'dir') {
+		if (!isDeleteClicked) {
 			dispatch(pushToStack(currentDir));
 			dispatch(setCurrentDir({ id: file._id, name: file.name }));
 		}
 	};
 	const openFileHandler = () => {
-		getFileUrl(file._id);
+		if (!isDeleteClicked) {
+			getFileUrl(file._id);
+		}
 	};
 	const downloadFileHandler = () => {
-		downloadFile(file._id, file.name);
+		dispatch(downloadFile(file._id, file.name));
 	};
 	const deleteFileHandler = () => {
 		setDeleteClicked(true);
-		dispatch(deleteFile(file._id));
+		dispatch(deleteFile(file._id, setDeleteClicked));
 	};
 
 	if (view === 'list') {
@@ -48,15 +68,27 @@ const File = ({ file }) => {
 					className={s.name}>
 					{file.name}
 				</h6>
+				{file.type !== 'dir' && (
+					<button
+						disabled={file.downloadProgress || isDeleteClicked}
+						className={[
+							s.download,
+							isDeleteClicked && s.downloadDisabled,
+							file.downloadProgress && s.downloadActive,
+						].join(' ')}
+						onClick={downloadFileHandler}>
+						{file.downloadProgress ? file.downloadProgress + '%' : 'Download'}
+					</button>
+				)}
 				<button
 					disabled={isDeleteClicked}
-					className={s.download}
+					className={[s.download, isDeleteClicked && s.deleteActive].join(' ')}
 					onClick={file.type === 'dir' ? openDirHandler : openFileHandler}>
-					Open // 3 button
+					Open
 				</button>
 				<button
-					disabled={isDeleteClicked}
 					className={[s.delete, isDeleteClicked && s.deleteActive].join(' ')}
+					disabled={isDeleteClicked}
 					onClick={deleteFileHandler}>
 					Delete
 				</button>
@@ -85,12 +117,27 @@ const File = ({ file }) => {
 					{nameCutter(file.name, 14)}
 				</h6>
 				<div className={s.plate__btns}>
+					{file.type !== 'dir' && (
+						<button
+							disabled={file.downloadProgress || isDeleteClicked}
+							className={[
+								s.download,
+								s.plate__download,
+								isDeleteClicked && s.downloadDisabled,
+								file.downloadProgress && s.downloadActive,
+							].join(' ')}
+							onClick={downloadFileHandler}>
+							{file.downloadProgress ? file.downloadProgress + '%' : 'Download'}
+						</button>
+					)}
 					<button
-						className={s.plate__download}
-						onClick={file.type === 'dir' ? openDirHandler : openFileHandler}>
-						Open
-					</button>
-					<button className={s.plate__delete} onClick={deleteFileHandler}>
+						disabled={isDeleteClicked}
+						onClick={deleteFileHandler}
+						className={[
+							s.delete,
+							s.plate__download,
+							isDeleteClicked && s.deleteActive,
+						].join(' ')}>
 						Delete
 					</button>
 				</div>

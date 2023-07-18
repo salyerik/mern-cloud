@@ -1,19 +1,22 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { createDir } from '../../../services/file';
+import { createDir } from '../../../services/file-service';
 import { togglePopup } from '../../../reducers/appReducer';
 import { addFile } from '../../../reducers/fileReducer';
 
 import s from './Popup.module.sass';
 
 const Popup = () => {
-	const [isClicked, setClicked] = useState(false);
 	const dispatch = useDispatch();
-	const { currentDir } = useSelector(state => state.file);
+	const [isCreateBtnClicked, setCreateBtnClicked] = useState(false);
+	const currentDir = useSelector(state => state.file.currentDir);
 	const [folderName, setFolderName] = useState('');
 	const createBtnHandler = () => {
-		setClicked(true);
+		if (folderName.trim().length === 0) {
+			return alert('Folder name cannot be empty');
+		}
+		setCreateBtnClicked(true);
 		createDir(folderName, currentDir.id).then(data => {
 			setFolderName('');
 			dispatch(togglePopup());
@@ -21,7 +24,7 @@ const Popup = () => {
 		});
 	};
 	const inputChangeHandler = e => {
-		if (isClicked) setClicked(false);
+		if (isCreateBtnClicked) setCreateBtnClicked(false);
 		setFolderName(e.target.value);
 	};
 
@@ -44,9 +47,12 @@ const Popup = () => {
 						placeholder='Enter folder name...'
 					/>
 					<button
-						disabled={isClicked}
+						disabled={isCreateBtnClicked}
 						onClick={createBtnHandler}
-						className={[s.createBtn, isClicked && s.createBtnActive].join(' ')}>
+						className={[
+							s.createBtn,
+							isCreateBtnClicked && s.createBtnActive,
+						].join(' ')}>
 						Create
 					</button>
 				</div>

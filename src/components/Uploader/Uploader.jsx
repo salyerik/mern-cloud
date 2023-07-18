@@ -5,7 +5,7 @@ import s from './Uploader.module.sass';
 
 const Uploader = () => {
 	const dispatch = useDispatch();
-	const { uploadFiles } = useSelector(state => state.upload);
+	const uploadFiles = useSelector(state => state.upload.uploadFiles);
 	return (
 		<section className={s.wrapper}>
 			<div className={s.header}>

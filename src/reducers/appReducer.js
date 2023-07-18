@@ -2,10 +2,7 @@ const TOGGLE_POPUP_DISPLAY = 'TOGGLE_POPUP_DISPLAY';
 const SHOW_LOADER = 'SHOW_LOADER';
 const HIDE_LOADER = 'HIDE_LOADER';
 
-const defaultState = {
-	isPopupVisible: false,
-	isLoaderVisible: true,
-};
+const defaultState = { isPopupVisible: false, isLoaderVisible: true };
 
 const appReducer = (state = defaultState, { type, payload }) => {
 	switch (type) {

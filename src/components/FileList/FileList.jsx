@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getFiles } from '../../services/file';
+import { getFiles } from '../../services/file-service';
 import { showLoader } from '../../reducers/appReducer';
 import File from '../File/File';
 import Loader from '../UI/Loader';

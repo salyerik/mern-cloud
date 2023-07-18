@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
-import { uploadFiles } from '../../services/file';
+import { uploadFiles } from '../../services/file-service';
 import { togglePopup } from '../../reducers/appReducer';
 import { popFromStack, setSort, setView } from '../../reducers/fileReducer';
 

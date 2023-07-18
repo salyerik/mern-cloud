@@ -1,11 +1,16 @@
 import * as uuid from 'uuid';
 import { hideLoader } from '../reducers/appReducer';
-import { addFile, fileDelete, setFiles } from '../reducers/fileReducer';
+import {
+	addFile,
+	fileDelete,
+	setFiles,
+	updateDownloadProgress,
+} from '../reducers/fileReducer';
 import {
 	changeUploadProgress,
 	uploadFile as uploadFileAC,
 } from '../reducers/uploadReducer';
-import { eventSource } from '../http/eventSource';
+import { eventSource } from './event-source';
 import axiosInstance from '../http/axios';
 import { MB } from '../utils/config';
 
@@ -24,10 +29,10 @@ const getFiles = (dirId, sort) => async dispatch => {
 	}
 };
 
-const createDir = (name, parent, type = 'dir') =>
+const createDir = (name, parent) =>
 	new Promise(async resolve => {
 		try {
-			const { data } = await axiosInstance.post('file', { name, type, parent });
+			const { data } = await axiosInstance.post('file', { name, parent });
 			resolve(data);
 		} catch (error) {
 			alert(error.response.data);
@@ -35,14 +40,12 @@ const createDir = (name, parent, type = 'dir') =>
 	});
 
 const uploadFiles = (files, parent) => dispatch => {
-	try {
-		files.forEach(async file => {
+	files.forEach(async file => {
+		try {
 			const size = file.size;
 			if (size > MB * 10) return alert('File cannot be more than 10 MB.');
 			const { data: exists } = await axiosInstance(
-				`file/exist-check?name=${file.name}${
-					parent ? '&parent=' + parent : ''
-				}`,
+				`file/exist-check?name=${file.name}${parent ? '&parent=' + parent : ''}`
 			);
 			if (exists) {
 				return alert('File already exists');
@@ -52,40 +55,41 @@ const uploadFiles = (files, parent) => dispatch => {
 			const formData = new FormData();
 			if (parent) formData.append('parent', parent);
 			formData.append('file', file);
+			let progressName = `progress-${file.name}`;
+			if (parent) {
+				progressName += parent;
+			}
 			const response = await axiosInstance.post('file/upload', formData, {
 				onUploadProgress: () => {
-					eventSource.addEventListener(`progress-${file.name}`, ({ data }) => {
+					eventSource.addEventListener(progressName, ({ data }) => {
 						dispatch(changeUploadProgress(id, +data));
 					});
 				},
 			});
 			dispatch(addFile(response.data));
-		});
-	} catch (error) {
-		console.log(error);
-		alert(error.response.data);
-	}
+		} catch (error) {
+			alert(error.response.data);
+		}
+	});
 };
 
-const downloadFile = async (id, name) => {
+const downloadFile = (id, name) => async dispatch => {
 	try {
-		const response = await axiosInstance(`file/download?id=${id}`, {
+		let diff = 0;
+		const { data } = await axiosInstance(`file/download?id=${id}`, {
 			responseType: 'blob',
 			onDownloadProgress: () => {
 				eventSource.addEventListener(`download-${name}`, ({ data }) => {
-					console.log(`Downloading: ${data}%`);
+					if (data !== diff) {
+						diff = data;
+						dispatch(updateDownloadProgress(id, data));
+					}
 				});
 			},
 		});
-		if (response.status !== 200) throw new Error('Server error');
 		const link = document.createElement('a');
-		link.href = window.URL.createObjectURL(new Blob([response.data]));
-		const contentDisposition = response.headers['content-disposition'];
-		const fileName = contentDisposition.substring(
-			contentDisposition.indexOf('filename=') + 9,
-			contentDisposition.length,
-		);
-		link.download = fileName;
+		link.href = window.URL.createObjectURL(new Blob([data]));
+		link.download = name;
 		link.click();
 	} catch (error) {
 		alert(error.message);
@@ -93,12 +97,9 @@ const downloadFile = async (id, name) => {
 };
 const getFileUrl = async id => {
 	try {
-		const response = await axiosInstance(`file/get-url?id=${id}`, {
-			responseType: 'json',
-		});
-		if (response.status !== 200) throw new Error('Server error');
+		const { data } = await axiosInstance(`file/get-url?id=${id}`);
 		const link = document.createElement('a');
-		link.href = response.data;
+		link.href = data;
 		link.target = '_blank';
 		link.click();
 	} catch (error) {
@@ -106,12 +107,14 @@ const getFileUrl = async id => {
 	}
 };
 
-const deleteFile = fileId => async dispatch => {
+const deleteFile = (fileId, setDeleteClicked) => async dispatch => {
 	try {
 		await axiosInstance.delete(`file?id=${fileId}`);
 		dispatch(fileDelete(fileId));
 	} catch (error) {
 		alert(error.response.data);
+	} finally {
+		setDeleteClicked(false);
 	}
 };
 

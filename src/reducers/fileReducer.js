@@ -8,6 +8,8 @@ const SET_SORT = 'SET_SORT';
 const RESET_STACK = 'RESET_STACK';
 const UPDATE_STACK = 'UPDATE_STACK';
 const SET_VIEW = 'SET_VIEW';
+const UPDATE_DOWNLOADING_PROGRESS = 'UPDATE_DOWNLOADING_PROGRESS';
+const RESET_DOWNLOADING_PROGRESS = 'RESET_DOWNLOADING_PROGRESS';
 
 const defaultState = {
 	files: [],
@@ -15,7 +17,6 @@ const defaultState = {
 	dirStack: [],
 	sort: 'type',
 	view: 'list',
-	filesDownloadProgress: [],
 };
 
 const fileReducer = (state = defaultState, { type, payload }) => {
@@ -40,6 +41,24 @@ const fileReducer = (state = defaultState, { type, payload }) => {
 			return { ...state, dirStack: payload };
 		case SET_VIEW:
 			return { ...state, view: payload };
+		case UPDATE_DOWNLOADING_PROGRESS: {
+			return {
+				...state,
+				files: state.files.map(file =>
+					file._id === payload.id
+						? { ...file, downloadProgress: payload.progress }
+						: file
+				),
+			};
+		}
+		case RESET_DOWNLOADING_PROGRESS: {
+			return {
+				...state,
+				files: state.files.map(file =>
+					file._id === payload ? { ...file, downloadProgress: null } : file
+				),
+			};
+		}
 		default:
 			return { ...state };
 	}
@@ -55,6 +74,14 @@ const setSort = sortValue => ({ type: SET_SORT, payload: sortValue });
 const resetStack = () => ({ type: RESET_STACK });
 const updateStack = stack => ({ type: UPDATE_STACK, payload: stack });
 const setView = view => ({ type: SET_VIEW, payload: view });
+const updateDownloadProgress = (id, progress) => ({
+	type: UPDATE_DOWNLOADING_PROGRESS,
+	payload: { id, progress },
+});
+const resetDownloadProgress = id => ({
+	type: RESET_DOWNLOADING_PROGRESS,
+	payload: id,
+});
 
 export {
 	fileReducer as default,
@@ -68,4 +95,6 @@ export {
 	resetStack,
 	updateStack,
 	setView,
+	updateDownloadProgress,
+	resetDownloadProgress,
 };

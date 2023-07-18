@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteAvatar, uploadAvatar } from '../../services/user';
+import { deleteAvatar, uploadAvatar } from '../../services/user-service';
 import s from './Profile.module.sass';
 
 import avatarIcon from '../../assets/icons/avatar.png';
@@ -7,10 +7,11 @@ import { useEffect, useState } from 'react';
 import Loader from '../UI/Loader/Loader';
 
 const Profile = () => {
-	const [isUpdating, setUpdating] = useState(false);
 	const dispatch = useDispatch();
-	const currentUser = useSelector(state => state.user.currentUser);
-	const { avatar, firstName, lastName } = currentUser;
+	const [isUpdating, setUpdating] = useState(false);
+	const { avatar, firstName, lastName } = useSelector(
+		state => state.user.currentUser
+	);
 
 	const uploadFileHandler = e => {
 		setUpdating(true);

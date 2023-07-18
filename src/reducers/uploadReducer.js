@@ -4,10 +4,7 @@ const UPLOAD_FILE = 'UPLOAD_FILE';
 const HIDE_FILE = 'HIDE_FILE';
 const CHANGE_UPLOAD_PROGRESS = 'CHANGE_UPLOAD_PROGRESS';
 
-const defaultState = {
-	isUploaderVisible: false,
-	uploadFiles: [],
-};
+const defaultState = { isUploaderVisible: false, uploadFiles: [] };
 
 const uploadReducer = (state = defaultState, { type, payload }) => {
 	switch (type) {
@@ -31,7 +28,7 @@ const uploadReducer = (state = defaultState, { type, payload }) => {
 				uploadFiles: state.uploadFiles.map(file =>
 					file.id === payload.fileId
 						? { ...file, progress: payload.progress }
-						: file,
+						: file
 				),
 			};
 		default:
