@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/mernCloud/static/css/main.b0ee0e84.css",
-    "main.js": "/mernCloud/static/js/main.030a9b77.js",
-    "static/media/avatar.png": "/mernCloud/static/media/avatar.44ea40a3eb8dd7fed2a9.png",
-    "static/media/plate.svg": "/mernCloud/static/media/plate.537ee20c106d82e32253afaf74dfab3d.svg",
-    "static/media/list.svg": "/mernCloud/static/media/list.ad4d5b054350df0c02eae50857cd50ce.svg",
-    "static/media/search.svg": "/mernCloud/static/media/search.4d4bde2b8bee634a9dc0d46ae788f351.svg",
-    "static/media/file.svg": "/mernCloud/static/media/file.a628420587875167fded294339198283.svg",
-    "static/media/folder.svg": "/mernCloud/static/media/folder.172094c172d9351f9e1bb9eab8384854.svg",
-    "static/media/arrow.svg": "/mernCloud/static/media/arrow.a98df6ac7d266dd1c1ef62f0235cfd3e.svg",
-    "index.html": "/mernCloud/index.html",
-    "main.b0ee0e84.css.map": "/mernCloud/static/css/main.b0ee0e84.css.map",
-    "main.030a9b77.js.map": "/mernCloud/static/js/main.030a9b77.js.map"
+    "main.css": "/mern-cloud/static/css/main.051ff607.css",
+    "main.js": "/mern-cloud/static/js/main.e628db6b.js",
+    "static/media/avatar.png": "/mern-cloud/static/media/avatar.44ea40a3eb8dd7fed2a9.png",
+    "static/media/plate.svg": "/mern-cloud/static/media/plate.537ee20c106d82e32253afaf74dfab3d.svg",
+    "static/media/list.svg": "/mern-cloud/static/media/list.ad4d5b054350df0c02eae50857cd50ce.svg",
+    "static/media/search.svg": "/mern-cloud/static/media/search.4d4bde2b8bee634a9dc0d46ae788f351.svg",
+    "static/media/file.svg": "/mern-cloud/static/media/file.a628420587875167fded294339198283.svg",
+    "static/media/folder.svg": "/mern-cloud/static/media/folder.172094c172d9351f9e1bb9eab8384854.svg",
+    "static/media/arrow.svg": "/mern-cloud/static/media/arrow.a98df6ac7d266dd1c1ef62f0235cfd3e.svg",
+    "index.html": "/mern-cloud/index.html",
+    "main.051ff607.css.map": "/mern-cloud/static/css/main.051ff607.css.map",
+    "main.e628db6b.js.map": "/mern-cloud/static/js/main.e628db6b.js.map"
   },
   "entrypoints": [
-    "static/css/main.b0ee0e84.css",
-    "static/js/main.030a9b77.js"
+    "static/css/main.051ff607.css",
+    "static/js/main.e628db6b.js"
   ]
 }
