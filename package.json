@@ -1,6 +1,7 @@
 {
 	"name": "mern-cloud",
 	"version": "0.1.0",
+	"author": "Saly Erik",
 	"homepage": "https://salyerik.github.io/mern-cloud",
 	"private": true,
 	"dependencies": {

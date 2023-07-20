@@ -9,10 +9,10 @@
 * Express.js, Node.js
 * Mongoose, MongoDB Atlas
 * React
-* Redux-toolkit
+* Redux
 * Amazon S3 Client
 * Axios
-* SSE, Express-sse
+* Express-sse
 * SASS
 
 [Link to the page ⬅️][link]   

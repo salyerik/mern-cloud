@@ -8,7 +8,7 @@ const isLocalhost = Boolean(
 
 export const API_URL = isLocalhost
 	? 'http://localhost:3030/api'
-	: 'https://oyster-hat.cyclic.app/api';
+	: 'https://mern-cloud-api.up.railway.app/api';
 
 export const MB =
 	window.navigator.platform.indexOf('Mac') === 0 ? 1024 * 1024 : 1024 * 1024;

@@ -8,9 +8,9 @@ import appReducer from './appReducer.js';
 import uploadReducer from './uploadReducer.js';
 
 const root = combineReducers({
+	app: appReducer,
 	user: userReducer,
 	file: fileReducer,
-	app: appReducer,
 	upload: uploadReducer,
 });
 
