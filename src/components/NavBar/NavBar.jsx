@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { searchFile } from '../../services/file-service';
-import { showLoader } from '../../reducers/appReducer';
-import { logOut } from '../../reducers/userReducer';
-import { resetStack } from '../../reducers/fileReducer';
+import { showLoader } from '../../store/slices/app-slice';
+import { logOut } from '../../store/slices/user-slice';
+import { resetStack } from '../../store/slices/file-slice';
 
 import s from './NavBar.module.sass';
 import avatarIcon from '../../assets/icons/avatar.png';

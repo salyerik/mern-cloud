@@ -1,5 +1,5 @@
-import { setUser } from '../reducers/userReducer';
 import axiosInstance from '../http/axios';
+import { setUser } from '../store/slices/user-slice';
 import { MB } from '../utils/config';
 
 const authPost =

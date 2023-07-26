@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
 import { uploadFiles } from '../../services/file-service';
-import { togglePopup } from '../../reducers/appReducer';
-import { popFromStack, setSort, setView } from '../../reducers/fileReducer';
+import { togglePopup } from '../../store/slices/app-slice';
+import { popFromStack, setSort, setView } from '../../store/slices/file-slice';
 
 import FileList from '../FileList';
 import BreadCrumps from '../BreadCrumps';

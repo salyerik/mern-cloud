@@ -3,7 +3,7 @@ import {
 	resetStack,
 	setCurrentDir,
 	updateStack,
-} from '../../reducers/fileReducer';
+} from '../../store/slices/file-slice';
 import s from './BreadCrumps.module.sass';
 
 const BreadCrumps = ({ currentDir, dirStack, firstName }) => {

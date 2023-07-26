@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
-import { hideFile } from '../../reducers/uploadReducer';
-import s from './UploaderFile.module.sass';
+import { hideFile } from '../../store/slices/upload-slice';
 import { nameCutter } from '../../utils/helpers';
+import s from './UploaderFile.module.sass';
 
 const UploaderFile = ({ file }) => {
 	const dispatch = useDispatch();

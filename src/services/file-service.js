@@ -1,15 +1,15 @@
 import * as uuid from 'uuid';
-import { hideLoader } from '../reducers/appReducer';
+import { hideLoader } from '../store/slices/app-slice';
 import {
 	addFile,
-	fileDelete,
+	deleteFile as deleteFileAC,
 	setFiles,
-	updateDownloadProgress,
-} from '../reducers/fileReducer';
+	updateDownloadingProgress,
+} from '../store/slices/file-slice';
 import {
 	changeUploadProgress,
 	uploadFile as uploadFileAC,
-} from '../reducers/uploadReducer';
+} from '../store/slices/upload-slice';
 import { eventSource } from './event-source';
 import axiosInstance from '../http/axios';
 import { MB } from '../utils/config';
@@ -62,7 +62,7 @@ const uploadFiles = (files, parent) => dispatch => {
 			const response = await axiosInstance.post('file/upload', formData, {
 				onUploadProgress: () => {
 					eventSource.addEventListener(progressName, ({ data }) => {
-						dispatch(changeUploadProgress(id, +data));
+						dispatch(changeUploadProgress({ id, progress: +data }));
 					});
 				},
 			});
@@ -82,7 +82,7 @@ const downloadFile = (id, name) => async dispatch => {
 				eventSource.addEventListener(`download-${name}`, ({ data }) => {
 					if (data !== diff) {
 						diff = data;
-						dispatch(updateDownloadProgress(id, data));
+						dispatch(updateDownloadingProgress({ id, progress: data }));
 					}
 				});
 			},
@@ -110,7 +110,7 @@ const getFileUrl = async id => {
 const deleteFile = (fileId, setDeleteClicked) => async dispatch => {
 	try {
 		await axiosInstance.delete(`file?id=${fileId}`);
-		dispatch(fileDelete(fileId));
+		dispatch(deleteFileAC(fileId));
 	} catch (error) {
 		alert(error.response.data);
 	} finally {

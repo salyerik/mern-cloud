@@ -7,9 +7,9 @@ import {
 } from '../../services/file-service';
 import {
 	pushToStack,
-	resetDownloadProgress,
+	resetDownloadingProgress,
 	setCurrentDir,
-} from '../../reducers/fileReducer';
+} from '../../store/slices/file-slice';
 
 import sizeFormat from '../../utils/size-format';
 import { nameCutter } from '../../utils/helpers';
@@ -27,7 +27,7 @@ const File = ({ file }) => {
 		if (file.downloadProgress) setDeleteClicked(true);
 		if (file.downloadProgress === '100') {
 			setTimeout(() => {
-				dispatch(resetDownloadProgress(file._id));
+				dispatch(resetDownloadingProgress(file._id));
 				setDeleteClicked(false);
 			}, [1000]);
 		}

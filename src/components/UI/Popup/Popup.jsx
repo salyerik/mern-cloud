@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { createDir } from '../../../services/file-service';
-import { togglePopup } from '../../../reducers/appReducer';
-import { addFile } from '../../../reducers/fileReducer';
+import { togglePopup } from '../../../store/slices/app-slice';
+import { addFile } from '../../../store/slices/file-slice';
 
 import s from './Popup.module.sass';
 

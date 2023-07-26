@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { hideUploader } from '../../reducers/uploadReducer';
+import { hideUploader } from '../../store/slices/upload-slice';
 import UploaderFile from '../UploaderFile';
 import s from './Uploader.module.sass';
 
