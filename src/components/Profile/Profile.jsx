@@ -1,28 +1,20 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { deleteAvatar, uploadAvatar } from '../../services/user-service';
-import s from './Profile.module.sass';
+import { useSelector } from 'react-redux';
+import userAPI from '../../store/rtk-queries/user-query';
 
 import avatarIcon from '../../assets/icons/avatar.png';
-import { useEffect, useState } from 'react';
 import Loader from '../UI/Loader/Loader';
+import s from './Profile.module.sass';
 
 const Profile = () => {
-	const dispatch = useDispatch();
-	const [isUpdating, setUpdating] = useState(false);
-	const { avatar, firstName, lastName } = useSelector(
-		state => state.user.currentUser
-	);
-
-	const uploadFileHandler = e => {
-		setUpdating(true);
-		dispatch(uploadAvatar(e.target.files[0], setUpdating));
-		e.target.value = '';
-	};
+	const [deleteAvatar] = userAPI.useDeleteAvatarMutation();
+	const [uploadAvatar, params] = userAPI.useUploadAvatarMutation();
+	const currentUser = useSelector(state => state.user.currentUser);
+	const { avatar, firstName, lastName } = currentUser;
 
 	return (
 		<section className={s.wrapper}>
 			<h2 className={s.title}>Profile</h2>
-			{isUpdating ? (
+			{params.isLoading ? (
 				<div className={s.loader}>
 					<Loader />
 				</div>
@@ -36,15 +28,13 @@ const Profile = () => {
 						/>
 						<label className={s.updateImg}>
 							<input
-								onChange={uploadFileHandler}
+								onChange={e => uploadAvatar(e.target.files[0])}
 								type='file'
 								accept='image/*'
 							/>
 							<span>Update Image</span>
 						</label>
-						<button
-							className={s.deleteImg}
-							onClick={() => dispatch(deleteAvatar(avatar))}>
+						<button className={s.deleteImg} onClick={deleteAvatar}>
 							Delete Image
 						</button>
 					</div>

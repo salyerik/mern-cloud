@@ -1,58 +1,31 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { searchFile } from '../../services/file-service';
-import { showLoader } from '../../store/slices/app-slice';
+import fileAPI from '../../store/rtk-queries/file-query';
 import { logOut } from '../../store/slices/user-slice';
-import { resetStack } from '../../store/slices/file-slice';
 
-import s from './NavBar.module.sass';
 import avatarIcon from '../../assets/icons/avatar.png';
 import searchIcon from '../../assets/icons/search.svg';
+import s from './NavBar.module.sass';
+import useDebounce from '../../hooks/useDebounce';
 
 function NavBar() {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 	const { pathname } = useLocation();
-	const { isAuth, currentUser } = useSelector(state => state.user);
-	const [searchTimeout, setSearchTimeout] = useState(false);
 	const [searchValue, setSearchValue] = useState('');
 	const [isSearchActive, setSearchActive] = useState(false);
+	const { isAuth, currentUser } = useSelector(state => state.user);
 	const { avatar } = currentUser;
-	const dispatch = useDispatch();
 
-	function dispatchSearch(value = '') {
-		dispatch(showLoader());
-		dispatch(resetStack());
-		dispatch(searchFile(value));
-	}
+	const debouncedValue = useDebounce(searchValue);
+	const [searchFile] = fileAPI.useSearchFileMutation();
 
-	function searchVisibilityHandler() {
-		if (searchValue.length) setSearchActive(true);
-		else setSearchActive(prev => !prev);
-	}
-
-	function searchHandler(e) {
+	useEffect(() => {
+		searchFile(debouncedValue || '');
 		if (!pathname.includes('/file')) navigate('/file');
-		setSearchValue(e.target.value);
-		clearTimeout(searchTimeout);
-		setSearchTimeout(
-			setTimeout(() => {
-				dispatchSearch(e.target.value);
-			}, 500)
-		);
-	}
-
-	function resetSearch() {
-		setSearchValue('');
-		dispatchSearch();
-		setSearchActive(false);
-	}
-
-	function logoutHandler() {
-		localStorage.removeItem('token');
-		dispatch(logOut());
-	}
+	}, [debouncedValue]);
 
 	return (
 		<div className={s.wrapper}>
@@ -62,7 +35,46 @@ function NavBar() {
 				</h1>
 			</div>
 			<div className={s.content}>
-				{!isAuth ? (
+				{isAuth ? (
+					<>
+						<div className={s.searchContainer}>
+							<label
+								className={[s.search, isSearchActive ? s.active : ''].join(
+									' '
+								)}>
+								<img
+									onClick={() => setSearchActive(true)}
+									src={searchIcon}
+									alt='searchIcon'
+								/>
+								<input
+									onBlur={() => setSearchActive(!!searchValue.length)}
+									value={searchValue}
+									placeholder='Search...'
+									onChange={e => setSearchValue(e.target.value)}
+									type='text'
+									name='search'
+								/>
+								{searchValue.length ? (
+									<span
+										onClick={() => {
+											setSearchValue('');
+											searchFile('');
+										}}>
+										&times;
+									</span>
+								) : null}
+							</label>
+						</div>
+						<Link to={'/profile'} className={s.profileLink}>
+							<img className={s.img} src={avatar || avatarIcon} alt='avatar' />
+							<span className={s.link}>Profile</span>
+						</Link>
+						<button className={s.link} onClick={() => dispatch(logOut())}>
+							Sign Out
+						</button>
+					</>
+				) : (
 					<div className={s.links}>
 						<Link className={s.link} to={'/about'}>
 							About
@@ -71,36 +83,6 @@ function NavBar() {
 							Sign Up
 						</Link>
 					</div>
-				) : (
-					<>
-						<div className={s.searchContainer}>
-							<label
-								onFocus={searchVisibilityHandler}
-								onBlur={searchVisibilityHandler}
-								className={[s.search, isSearchActive ? s.active : ''].join(
-									' '
-								)}>
-								<img src={searchIcon} alt='searchIcon' />
-								<input
-									value={searchValue}
-									placeholder='Search...'
-									onChange={searchHandler}
-									type='text'
-									name='search'
-								/>
-								{searchValue.length ? (
-									<span onClick={resetSearch}>&times;</span>
-								) : null}
-							</label>
-						</div>
-						<Link to={'/profile'} className={s.profileLink}>
-							<img className={s.img} src={avatar || avatarIcon} alt='avatar' />
-							<span className={s.link}>Profile</span>
-						</Link>
-						<button className={s.link} onClick={logoutHandler}>
-							Sign Out
-						</button>
-					</>
 				)}
 			</div>
 		</div>

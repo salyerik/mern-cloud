@@ -1,30 +1,27 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = { isUploaderVisible: false, uploadFiles: [] };
+const initialState = { isUploaderVisible: false, uploadingFiles: [] };
 
 const uploadSlice = createSlice({
 	name: 'upload',
 	initialState,
 	reducers: {
-		showUploader: state => {
-			state.isUploaderVisible = true;
-		},
 		hideUploader: state => {
 			state.isUploaderVisible = false;
-			state.uploadFiles = [];
+			state.uploadingFiles = [];
 		},
 		uploadFile: (state, action) => {
 			state.isUploaderVisible = true;
-			state.uploadFiles.push(action.payload);
+			state.uploadingFiles.push(action.payload);
 		},
 		hideFile: (state, action) => {
-			state.isUploaderVisible = !!(state.uploadFiles.length - 1);
-			state.uploadFiles = state.uploadFiles.filter(
+			state.isUploaderVisible = !!(state.uploadingFiles.length - 1);
+			state.uploadingFiles = state.uploadingFiles.filter(
 				file => file.id !== action.payload
 			);
 		},
 		changeUploadProgress: (state, action) => {
-			const file = state.uploadFiles.find(
+			const file = state.uploadingFiles.find(
 				file => file.id === action.payload.id
 			);
 			file.progress = action.payload.progress;

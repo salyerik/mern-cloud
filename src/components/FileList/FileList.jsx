@@ -1,22 +1,20 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { getFiles } from '../../services/file-service';
-import { showLoader } from '../../store/slices/app-slice';
+import { useSelector } from 'react-redux';
+import fileAPI from '../../store/rtk-queries/file-query';
+
 import File from '../File/File';
 import Loader from '../UI/Loader';
 import s from './FileList.module.sass';
 
 const FileList = () => {
 	const { files, currentDir, sort, view } = useSelector(state => state.file);
-	const isLoaderVisible = useSelector(state => state.app.isLoaderVisible);
-	const dispatch = useDispatch();
+	const [getFiles, params] = fileAPI.useGetFilesMutation();
 
 	useEffect(() => {
-		dispatch(showLoader());
-		dispatch(getFiles(currentDir.id, sort));
+		getFiles({ dirId: currentDir.id, sort });
 	}, [currentDir.id, sort]);
 
-	if (isLoaderVisible) {
+	if (params.isLoading) {
 		return (
 			<div className={s.loader}>
 				<Loader />

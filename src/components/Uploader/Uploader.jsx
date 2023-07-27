@@ -5,7 +5,7 @@ import s from './Uploader.module.sass';
 
 const Uploader = () => {
 	const dispatch = useDispatch();
-	const uploadFiles = useSelector(state => state.upload.uploadFiles);
+	const uploadingFiles = useSelector(state => state.upload.uploadingFiles);
 	return (
 		<section className={s.wrapper}>
 			<div className={s.header}>
@@ -14,7 +14,7 @@ const Uploader = () => {
 					X
 				</button>
 			</div>
-			{uploadFiles.map(file => (
+			{uploadingFiles.map(file => (
 				<UploaderFile file={file} key={file.id} />
 			))}
 		</section>

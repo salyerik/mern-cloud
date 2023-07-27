@@ -1,55 +1,44 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import {
-	deleteFile,
-	downloadFile,
-	getFileUrl,
-} from '../../services/file-service';
-import {
-	pushToStack,
-	resetDownloadingProgress,
-	setCurrentDir,
-} from '../../store/slices/file-slice';
 
-import sizeFormat from '../../utils/size-format';
-import { nameCutter } from '../../utils/helpers';
+import fileAPI from '../../store/rtk-queries/file-query';
+import { openDir, resetDownload } from '../../store/slices/file-slice';
+import { nameCutter, sizeFormat } from '../../utils/helpers';
+
 import fileIcon from './../../assets/icons/file.svg';
 import folderIcon from './../../assets/icons/folder.svg';
-
 import s from './File.module.sass';
 
 const File = ({ file }) => {
 	const dispatch = useDispatch();
-	const [isDeleteClicked, setDeleteClicked] = useState(false);
-	const { currentDir, view } = useSelector(state => state.file);
+	const view = useSelector(state => state.file.view);
+	const [isBtnClicked, setBtnClicked] = useState(false);
+	const [openFile] = fileAPI.useGetFileUrlMutation();
+	const [downloadFile] = fileAPI.useDownloadFileMutation();
+	const [deleteFile, deleteParams] = fileAPI.useDeleteFileMutation();
 
 	useEffect(() => {
-		if (file.downloadProgress) setDeleteClicked(true);
+		if (deleteParams.isError) setBtnClicked(false);
+		if (file.downloadProgress) setBtnClicked(true);
 		if (file.downloadProgress === '100') {
-			setTimeout(() => {
-				dispatch(resetDownloadingProgress(file._id));
-				setDeleteClicked(false);
-			}, [1000]);
+			dispatch(resetDownload(file._id));
+			setBtnClicked(false);
 		}
-	}, [file.downloadProgress]);
+	}, [file.downloadProgress, deleteParams.isError]);
 
 	const openDirHandler = () => {
-		if (!isDeleteClicked) {
-			dispatch(pushToStack(currentDir));
-			dispatch(setCurrentDir({ id: file._id, name: file.name }));
+		if (!isBtnClicked) {
+			dispatch(openDir({ id: file._id, name: file.name }));
 		}
 	};
 	const openFileHandler = () => {
-		if (!isDeleteClicked) {
-			getFileUrl(file._id);
+		if (!isBtnClicked) {
+			openFile(file._id);
 		}
 	};
-	const downloadFileHandler = () => {
-		dispatch(downloadFile(file._id, file.name));
-	};
 	const deleteFileHandler = () => {
-		setDeleteClicked(true);
-		dispatch(deleteFile(file._id, setDeleteClicked));
+		setBtnClicked(true);
+		deleteFile(file._id);
 	};
 
 	if (view === 'list') {
@@ -70,25 +59,25 @@ const File = ({ file }) => {
 				</h6>
 				{file.type !== 'dir' && (
 					<button
-						disabled={file.downloadProgress || isDeleteClicked}
+						disabled={file.downloadProgress || isBtnClicked}
 						className={[
 							s.download,
-							isDeleteClicked && s.downloadDisabled,
+							isBtnClicked && s.downloadDisabled,
 							file.downloadProgress && s.downloadActive,
 						].join(' ')}
-						onClick={downloadFileHandler}>
+						onClick={() => downloadFile({ id: file._id, name: file.name })}>
 						{file.downloadProgress ? file.downloadProgress + '%' : 'Download'}
 					</button>
 				)}
 				<button
-					disabled={isDeleteClicked}
-					className={[s.download, isDeleteClicked && s.deleteActive].join(' ')}
+					disabled={isBtnClicked}
+					className={[s.download, isBtnClicked && s.deleteActive].join(' ')}
 					onClick={file.type === 'dir' ? openDirHandler : openFileHandler}>
 					Open
 				</button>
 				<button
-					className={[s.delete, isDeleteClicked && s.deleteActive].join(' ')}
-					disabled={isDeleteClicked}
+					className={[s.delete, isBtnClicked && s.deleteActive].join(' ')}
+					disabled={isBtnClicked}
 					onClick={deleteFileHandler}>
 					Delete
 				</button>
@@ -119,24 +108,24 @@ const File = ({ file }) => {
 				<div className={s.plate__btns}>
 					{file.type !== 'dir' && (
 						<button
-							disabled={file.downloadProgress || isDeleteClicked}
+							disabled={file.downloadProgress || isBtnClicked}
 							className={[
 								s.download,
 								s.plate__download,
-								isDeleteClicked && s.downloadDisabled,
+								isBtnClicked && s.downloadDisabled,
 								file.downloadProgress && s.downloadActive,
 							].join(' ')}
-							onClick={downloadFileHandler}>
+							onClick={() => downloadFile({ id: file._id, name: file.name })}>
 							{file.downloadProgress ? file.downloadProgress + '%' : 'Download'}
 						</button>
 					)}
 					<button
-						disabled={isDeleteClicked}
+						disabled={isBtnClicked}
 						onClick={deleteFileHandler}
 						className={[
 							s.delete,
 							s.plate__download,
-							isDeleteClicked && s.deleteActive,
+							isBtnClicked && s.deleteActive,
 						].join(' ')}>
 						Delete
 					</button>

@@ -9,7 +9,7 @@
 * Express.js, Node.js
 * Mongoose, MongoDB Atlas
 * React
-* Redux
+* Redux-Toolkit, RTK-query
 * Amazon S3 Client
 * Axios
 * Express-sse

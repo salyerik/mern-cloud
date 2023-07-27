@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { createDir } from '../../../services/file-service';
-import { togglePopup } from '../../../store/slices/app-slice';
-import { addFile } from '../../../store/slices/file-slice';
+import fileAPI from '../../store/rtk-queries/file-query';
+import { togglePopup } from '../../store/slices/file-slice';
 
 import s from './Popup.module.sass';
 
@@ -12,20 +11,17 @@ const Popup = () => {
 	const [isCreateBtnClicked, setCreateBtnClicked] = useState(false);
 	const currentDir = useSelector(state => state.file.currentDir);
 	const [folderName, setFolderName] = useState('');
+	const [createDir] = fileAPI.useCreateDirMutation();
+
 	const createBtnHandler = () => {
 		if (folderName.trim().length === 0) {
 			return alert('Folder name cannot be empty');
 		}
 		setCreateBtnClicked(true);
-		createDir(folderName, currentDir.id).then(data => {
-			setFolderName('');
-			dispatch(togglePopup());
-			dispatch(addFile(data));
-		});
+		createDir({ name: folderName, parent: currentDir.id });
 	};
 	const inputChangeHandler = e => {
-		if (isCreateBtnClicked) setCreateBtnClicked(false);
-		setFolderName(e.target.value);
+		if (!isCreateBtnClicked) setFolderName(e.target.value);
 	};
 
 	return (

@@ -1,36 +1,40 @@
 import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-import Input from '../UI/Input';
-import { authPost } from '../../services/user-service';
-import s from './Authorization.module.sass';
+import userAPI from '../../store/rtk-queries/user-query';
 import useInput from '../../hooks/useInput';
 
+import Input from '../UI/Input';
+import s from './Authorization.module.sass';
+
 const Authorization = () => {
-	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const [isLoginPage, setLoginPage] = useState(true);
+
+	const [authPost, params] = userAPI.useAuthorizedMutation();
 
 	const firstName = useInput('');
 	const lastName = useInput('');
 	const email = useInput('');
 	const password = useInput('');
 
-	useEffect(() => setLoginPage(pathname.includes('login')), [pathname]);
+	useEffect(() => {
+		if (params.isSuccess) navigate('/file');
+	}, [params.isSuccess]);
+
+	useEffect(() => {
+		setLoginPage(pathname.includes('login'));
+	}, [pathname]);
 
 	const authHandler = () => {
-		dispatch(
-			authPost(
-				firstName.value,
-				lastName.value,
-				email.value,
-				password.value,
-				isLoginPage ? 'login' : 'register',
-				navigate
-			)
-		);
+		const body = {
+			firstName: firstName.value,
+			lastName: lastName.value,
+			email: email.value,
+			password: password.value,
+		};
+		authPost({ body, path: isLoginPage ? 'login' : 'register' });
 	};
 
 	return (
@@ -59,7 +63,7 @@ const Authorization = () => {
 					</button>
 				</div>
 			</div>
-			<div className={s.bottom}>Please authorized to store your files.</div>
+			<div className={s.bottom}>Please authorized to store your files</div>
 		</section>
 	);
 };
