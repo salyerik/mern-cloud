@@ -7,12 +7,12 @@ import useInput from '../../hooks/useInput';
 import Input from '../UI/Input';
 import s from './Authorization.module.sass';
 
-const Authorization = () => {
+const Authorization: React.FC = () => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const [isLoginPage, setLoginPage] = useState(true);
 
-	const [authPost, params] = userAPI.useAuthorizedMutation();
+	const [authPost, params] = userAPI.useAuthorizeMutation();
 
 	const firstName = useInput('');
 	const lastName = useInput('');

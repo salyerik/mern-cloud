@@ -1,7 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import userAPI from '../rtk-queries/user-query';
+import { IAuthorized, IUser, IUserSlice } from '../../types/user-types';
 
-const initialState = { isAuth: false, currentUser: {} };
+const initialState: IUserSlice = { isAuth: false, currentUser: {} as IUser };
 
 const userSlice = createSlice({
 	name: 'user',
@@ -10,13 +11,13 @@ const userSlice = createSlice({
 		logOut: state => {
 			localStorage.removeItem('token');
 			state.isAuth = false;
-			state.currentUser = {};
+			state.currentUser = {} as IUser;
 		},
 	},
 	extraReducers(builder) {
 		builder.addMatcher(
-			userAPI.endpoints.authorized.matchFulfilled,
-			(state, action) => {
+			userAPI.endpoints.authorize.matchFulfilled,
+			(state, action: PayloadAction<IAuthorized>) => {
 				state.currentUser = action.payload.user;
 				state.isAuth = true;
 				localStorage.setItem('token', action.payload.token);
@@ -24,27 +25,27 @@ const userSlice = createSlice({
 		);
 		builder.addMatcher(
 			userAPI.endpoints.checkAuth.matchFulfilled,
-			(state, action) => {
+			(state, action: PayloadAction<IAuthorized>) => {
 				state.currentUser = action.payload.user;
 				state.isAuth = true;
 				localStorage.setItem('token', action.payload.token);
 			}
 		);
 		builder.addMatcher(userAPI.endpoints.checkAuth.matchRejected, state => {
-			state.currentUser = {};
+			state.currentUser = {} as IUser;
 			state.isAuth = false;
 			localStorage.removeItem('token');
 		});
 		builder.addMatcher(
 			userAPI.endpoints.deleteAvatar.matchFulfilled,
-			(state, action) => {
+			(state, action: PayloadAction<IAuthorized>) => {
 				state.currentUser = action.payload.user;
 				localStorage.setItem('token', action.payload.token);
 			}
 		);
 		builder.addMatcher(
 			userAPI.endpoints.uploadAvatar.matchFulfilled,
-			(state, action) => {
+			(state, action: PayloadAction<IAuthorized>) => {
 				state.currentUser = action.payload.user;
 				localStorage.setItem('token', action.payload.token);
 			}

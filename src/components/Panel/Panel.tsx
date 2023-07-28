@@ -1,10 +1,12 @@
-import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
 
+import useAppDispatch from '../../hooks/useAppDispatch';
+import useTypedSelector from '../../hooks/useTypedSelector';
 import { togglePopup } from '../../store/slices/file-slice';
 import { popFromStack, setSort, setView } from '../../store/slices/file-slice';
 import fileAPI from '../../store/rtk-queries/file-query';
 
+import { ISort } from '../../types/file-types';
 import FileList from '../FileList';
 import BreadCrumps from '../BreadCrumps';
 import Popup from '../Popup';
@@ -15,34 +17,34 @@ import listIcon from './../../assets/icons/list.svg';
 import plateIcon from './../../assets/icons/plate.svg';
 import s from './Panel.module.sass';
 
-const Panel = () => {
-	const dispatch = useDispatch();
-	const { firstName, lastName } = useSelector(state => state.user.currentUser);
-	const { currentDir, dirStack, sort, isPopupVisible } = useSelector(
-		state => state.file
-	);
-	const { isUploaderVisible } = useSelector(state => state.upload);
+const Panel: React.FC = () => {
+	const dispatch = useAppDispatch();
+	const currentUser = useTypedSelector(state => state.user.currentUser);
+	const file = useTypedSelector(state => state.file);
+	const { isUploaderVisible } = useTypedSelector(state => state.upload);
 	const [dragEnter, setDragEnter] = useState(false);
 	const [uploadFiles] = fileAPI.useUploadFilesMutation();
 
-	const uploadFilesHandler = e => {
-		uploadFiles({ files: [...e.target.files], parent: currentDir.id });
+	const { currentDir, dirStack, sort, isPopupVisible } = file;
+	const { firstName, lastName } = currentUser;
+
+	const uploadFilesHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const files = (e.target as HTMLInputElement).files;
+		if (files) uploadFiles({ files: [...files], parent: currentDir.id });
 		e.target.value = '';
 	};
-
-	const dragEnterHandler = e => {
+	const dragEnterHandler = (e: React.DragEvent<HTMLElement>) => {
 		e.preventDefault();
 		if (!dragEnter) setDragEnter(true);
 	};
-	const dragLeaveHandler = e => {
+	const dragLeaveHandler = (e: React.DragEvent<HTMLElement>) => {
 		e.preventDefault();
 		if (dragEnter) setDragEnter(false);
 	};
-	const dropHandler = e => {
+	const dropHandler = (e: React.DragEvent<HTMLDivElement>) => {
 		e.preventDefault();
 		setDragEnter(false);
-		uploadFiles([...e.dataTransfer.files], currentDir.id);
-		e.target.value = '';
+		uploadFiles({ files: [...e.dataTransfer.files], parent: currentDir.id });
 	};
 
 	return (
@@ -74,9 +76,9 @@ const Panel = () => {
 								onClick={() => dispatch(togglePopup())}>
 								Create Folder
 							</button>
-							<label onChange={uploadFilesHandler} className={s.label}>
+							<label className={s.label}>
 								<span>Upload File</span>
-								<input type='file' multiple />
+								<input onChange={uploadFilesHandler} type='file' multiple />
 							</label>
 						</div>
 						<div className={s.views}>
@@ -84,7 +86,7 @@ const Panel = () => {
 								<span>Sort: </span>
 								<select
 									defaultValue={sort}
-									onChange={e => dispatch(setSort(e.target.value))}>
+									onChange={e => dispatch(setSort(e.target.value as ISort))}>
 									<option value='type'>Type</option>
 									<option value='name'>Name</option>
 									<option value='date'>Date</option>

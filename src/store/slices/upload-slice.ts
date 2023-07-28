@@ -1,6 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { IUploadSlice, IUploadingFile } from '../../types/upload-types';
 
-const initialState = { isUploaderVisible: false, uploadingFiles: [] };
+const initialState: IUploadSlice = {
+	isUploaderVisible: false,
+	uploadingFiles: [] as IUploadingFile[],
+};
 
 const uploadSlice = createSlice({
 	name: 'upload',
@@ -8,23 +12,23 @@ const uploadSlice = createSlice({
 	reducers: {
 		hideUploader: state => {
 			state.isUploaderVisible = false;
-			state.uploadingFiles = [];
+			state.uploadingFiles = [] as IUploadingFile[];
 		},
-		uploadFile: (state, action) => {
+		uploadFile: (state, action: PayloadAction<IUploadingFile>) => {
 			state.isUploaderVisible = true;
 			state.uploadingFiles.push(action.payload);
 		},
-		hideFile: (state, action) => {
+		hideFile: (state, action: PayloadAction<string>) => {
 			state.isUploaderVisible = !!(state.uploadingFiles.length - 1);
 			state.uploadingFiles = state.uploadingFiles.filter(
 				file => file.id !== action.payload
 			);
 		},
-		changeUploadProgress: (state, action) => {
+		changeUploadProgress: (state, action: PayloadAction<IUploadingFile>) => {
 			const file = state.uploadingFiles.find(
 				file => file.id === action.payload.id
 			);
-			file.progress = action.payload.progress;
+			if (file) file.progress = action.payload.progress;
 		},
 	},
 });

@@ -1,22 +1,23 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
+import useTypedSelector from '../../hooks/useTypedSelector';
+import useAppDispatch from '../../hooks/useAppDispatch';
+import useDebounce from '../../hooks/useDebounce';
 import fileAPI from '../../store/rtk-queries/file-query';
 import { logOut } from '../../store/slices/user-slice';
 
 import avatarIcon from '../../assets/icons/avatar.png';
 import searchIcon from '../../assets/icons/search.svg';
 import s from './NavBar.module.sass';
-import useDebounce from '../../hooks/useDebounce';
 
-function NavBar() {
+const NavBar: React.FC = () => {
 	const navigate = useNavigate();
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const { pathname } = useLocation();
 	const [searchValue, setSearchValue] = useState('');
 	const [isSearchActive, setSearchActive] = useState(false);
-	const { isAuth, currentUser } = useSelector(state => state.user);
+	const { isAuth, currentUser } = useTypedSelector(state => state.user);
 	const { avatar } = currentUser;
 
 	const debouncedValue = useDebounce(searchValue);
@@ -87,6 +88,6 @@ function NavBar() {
 			</div>
 		</div>
 	);
-}
+};
 
 export default NavBar;

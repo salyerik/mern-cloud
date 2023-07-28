@@ -5,7 +5,7 @@
 ### You can authorized and store files
 
 ## Stack:
-* JavaScript
+* TypeScript
 * Express.js, Node.js
 * Mongoose, MongoDB Atlas
 * React

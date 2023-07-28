@@ -1,13 +1,15 @@
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import useTypedSelector from '../../hooks/useTypedSelector';
 import fileAPI from '../../store/rtk-queries/file-query';
 
 import File from '../File/File';
 import Loader from '../UI/Loader';
 import s from './FileList.module.sass';
 
-const FileList = () => {
-	const { files, currentDir, sort, view } = useSelector(state => state.file);
+const FileList: React.FC = () => {
+	const { files, currentDir, sort, view } = useTypedSelector(
+		state => state.file
+	);
 	const [getFiles, params] = fileAPI.useGetFilesMutation();
 
 	useEffect(() => {

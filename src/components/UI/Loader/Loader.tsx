@@ -1,6 +1,6 @@
 import s from './Loader.module.sass';
 
-const Loader = () => (
+const Loader: React.FC = () => (
 	<div className={s.ldsRoller}>
 		<div></div>
 		<div></div>

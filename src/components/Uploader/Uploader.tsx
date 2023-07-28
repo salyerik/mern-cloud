@@ -1,11 +1,12 @@
-import { useDispatch, useSelector } from 'react-redux';
+import useAppDispatch from '../../hooks/useAppDispatch';
+import useTypedSelector from '../../hooks/useTypedSelector';
 import { hideUploader } from '../../store/slices/upload-slice';
 import UploaderFile from '../UploaderFile';
 import s from './Uploader.module.sass';
 
-const Uploader = () => {
-	const dispatch = useDispatch();
-	const uploadingFiles = useSelector(state => state.upload.uploadingFiles);
+const Uploader: React.FC = () => {
+	const dispatch = useAppDispatch();
+	const uploadingFiles = useTypedSelector(state => state.upload.uploadingFiles);
 	return (
 		<section className={s.wrapper}>
 			<div className={s.header}>

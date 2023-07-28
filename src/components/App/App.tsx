@@ -1,15 +1,14 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-
+import useTypedSelector from './../../hooks/useTypedSelector';
 import userAPI from '../../store/rtk-queries/user-query';
 import { authRoutes, notAuthRoutes } from '../../utils/routes';
 import NavBar from '../NavBar';
 import Loader from '../UI/Loader/Loader';
 import './App.sass';
 
-const App = () => {
-	const { isLoading } = userAPI.useCheckAuthQuery();
-	const isAuth = useSelector(state => state.user.isAuth);
+const App: React.FC = () => {
+	const { isLoading } = userAPI.useCheckAuthQuery(null);
+	const isAuth = useTypedSelector(state => state.user.isAuth);
 
 	if (isLoading) return <Loader />;
 

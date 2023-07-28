@@ -1,17 +1,19 @@
-import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
+import useAppDispatch from '../../hooks/useAppDispatch';
+import useTypedSelector from '../../hooks/useTypedSelector';
 import fileAPI from '../../store/rtk-queries/file-query';
 import { openDir, resetDownload } from '../../store/slices/file-slice';
 import { nameCutter, sizeFormat } from '../../utils/helpers';
 
 import fileIcon from './../../assets/icons/file.svg';
 import folderIcon from './../../assets/icons/folder.svg';
+import { IFile } from '../../types/file-types';
 import s from './File.module.sass';
 
-const File = ({ file }) => {
-	const dispatch = useDispatch();
-	const view = useSelector(state => state.file.view);
+const File: React.FC<{ file: IFile }> = ({ file }) => {
+	const dispatch = useAppDispatch();
+	const view = useTypedSelector(state => state.file.view);
 	const [isBtnClicked, setBtnClicked] = useState(false);
 	const [openFile] = fileAPI.useGetFileUrlMutation();
 	const [downloadFile] = fileAPI.useDownloadFileMutation();
@@ -20,7 +22,7 @@ const File = ({ file }) => {
 	useEffect(() => {
 		if (deleteParams.isError) setBtnClicked(false);
 		if (file.downloadProgress) setBtnClicked(true);
-		if (file.downloadProgress === '100') {
+		if (file.downloadProgress === 100) {
 			dispatch(resetDownload(file._id));
 			setBtnClicked(false);
 		}
@@ -59,7 +61,7 @@ const File = ({ file }) => {
 				</h6>
 				{file.type !== 'dir' && (
 					<button
-						disabled={file.downloadProgress || isBtnClicked}
+						disabled={!!file.downloadProgress || isBtnClicked}
 						className={[
 							s.download,
 							isBtnClicked && s.downloadDisabled,
@@ -108,7 +110,7 @@ const File = ({ file }) => {
 				<div className={s.plate__btns}>
 					{file.type !== 'dir' && (
 						<button
-							disabled={file.downloadProgress || isBtnClicked}
+							disabled={!!file.downloadProgress || isBtnClicked}
 							className={[
 								s.download,
 								s.plate__download,

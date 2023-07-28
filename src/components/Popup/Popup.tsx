@@ -1,15 +1,17 @@
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+
+import useTypedSelector from '../../hooks/useTypedSelector';
+import useAppDispatch from '../../hooks/useAppDispatch';
 
 import fileAPI from '../../store/rtk-queries/file-query';
 import { togglePopup } from '../../store/slices/file-slice';
 
 import s from './Popup.module.sass';
 
-const Popup = () => {
-	const dispatch = useDispatch();
+const Popup: React.FC = () => {
+	const dispatch = useAppDispatch();
 	const [isCreateBtnClicked, setCreateBtnClicked] = useState(false);
-	const currentDir = useSelector(state => state.file.currentDir);
+	const currentDir = useTypedSelector(state => state.file.currentDir);
 	const [folderName, setFolderName] = useState('');
 	const [createDir] = fileAPI.useCreateDirMutation();
 
@@ -20,7 +22,7 @@ const Popup = () => {
 		setCreateBtnClicked(true);
 		createDir({ name: folderName, parent: currentDir.id });
 	};
-	const inputChangeHandler = e => {
+	const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (!isCreateBtnClicked) setFolderName(e.target.value);
 	};
 

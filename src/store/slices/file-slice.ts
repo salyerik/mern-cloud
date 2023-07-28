@@ -1,7 +1,9 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 import fileAPI from '../rtk-queries/file-query';
+import { IDir, IFile, IFileSlice, ISort, IView } from '../../types/file-types';
 
-const initialState = {
+const initialState: IFileSlice = {
 	isPopupVisible: false,
 	files: [],
 	currentDir: { id: null, name: null },
@@ -14,24 +16,25 @@ const fileSlice = createSlice({
 	name: 'app',
 	initialState,
 	reducers: {
-		openDir(state, action) {
+		openDir(state, action: PayloadAction<IDir>) {
 			state.dirStack.push(state.currentDir);
 			state.currentDir = action.payload;
 		},
 		popFromStack(state) {
-			state.currentDir = state.dirStack.pop();
+			const poppedDir = state.dirStack.pop();
+			if (poppedDir) state.currentDir = poppedDir;
 		},
-		addFile(state, action) {
+		addFile(state, action: PayloadAction<IFile>) {
 			state.files.push(action.payload);
 		},
-		deleteFile(state, action) {
+		deleteFile(state, action: PayloadAction<string>) {
 			state.files = state.files.filter(f => f._id !== action.payload);
 		},
-		setSort(state, action) {
+		setSort(state, action: PayloadAction<ISort>) {
 			state.sort = action.payload;
 		},
-		changeFolder(state, action) {
-			const newStack = [];
+		changeFolder(state, action: PayloadAction<IDir>) {
+			const newStack = [] as IDir[];
 			for (let i = 0; i < state.dirStack.length; i++) {
 				const stackDir = state.dirStack[i];
 				if (action.payload.id === stackDir.id) break;
@@ -40,16 +43,19 @@ const fileSlice = createSlice({
 			state.dirStack = newStack;
 			state.currentDir = action.payload;
 		},
-		setView(state, action) {
+		setView(state, action: PayloadAction<IView>) {
 			state.view = action.payload;
 		},
-		updateDownloadingProgress(state, action) {
+		updateDownloadingProgress(
+			state,
+			action: PayloadAction<{ id: string; progress: number }>
+		) {
 			const file = state.files.find(f => f._id === action.payload.id);
-			file.downloadProgress = action.payload.progress;
+			if (file) file.downloadProgress = action.payload.progress;
 		},
-		resetDownload(state, action) {
+		resetDownload(state, action: PayloadAction<string>) {
 			const file = state.files.find(f => f._id === action.payload);
-			file.downloadProgress = null;
+			if (file) file.downloadProgress = null;
 		},
 		togglePopup(state) {
 			state.isPopupVisible = !state.isPopupVisible;
@@ -58,14 +64,14 @@ const fileSlice = createSlice({
 	extraReducers(builder) {
 		builder.addMatcher(
 			fileAPI.endpoints.createDir.matchFulfilled,
-			(state, action) => {
+			(state, action: PayloadAction<IFile>) => {
 				state.files.push(action.payload);
 				state.isPopupVisible = false;
 			}
 		);
 		builder.addMatcher(
 			fileAPI.endpoints.getFileUrl.matchFulfilled,
-			(state, action) => {
+			(state, action: PayloadAction<string>) => {
 				const link = document.createElement('a');
 				link.href = action.payload;
 				link.target = '_blank';
@@ -74,29 +80,34 @@ const fileSlice = createSlice({
 		);
 		builder.addMatcher(
 			fileAPI.endpoints.deleteFile.matchFulfilled,
-			(state, action) => {
+			(state, action: PayloadAction<{ id: string; message: string }>) => {
 				state.files = state.files.filter(f => f._id !== action.payload.id);
 			}
 		);
 		builder.addMatcher(
 			fileAPI.endpoints.deleteFile.matchRejected,
-			(state, action) => {
-				alert(action.payload.data);
+			(
+				state,
+				action: PayloadAction<
+					{ data: string } | undefined | FetchBaseQueryError
+				>
+			) => {
+				alert(action.payload?.data);
 			}
 		);
 		builder.addMatcher(
 			fileAPI.endpoints.getFiles.matchFulfilled,
-			(state, action) => {
+			(state, action: PayloadAction<IFile[]>) => {
 				state.files = action.payload;
 			}
 		);
 		builder.addMatcher(fileAPI.endpoints.searchFile.matchPending, state => {
 			state.currentDir = initialState.currentDir;
-			state.dirStack = [];
+			state.dirStack = [] as IDir[];
 		});
 		builder.addMatcher(
 			fileAPI.endpoints.searchFile.matchFulfilled,
-			(state, action) => {
+			(state, action: PayloadAction<IFile[]>) => {
 				state.files = action.payload;
 			}
 		);

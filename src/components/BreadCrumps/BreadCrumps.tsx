@@ -1,9 +1,14 @@
-import { useDispatch } from 'react-redux';
+import useAppDispatch from '../../hooks/useAppDispatch';
 import { changeFolder } from '../../store/slices/file-slice';
+import { IBreadCrumps } from '../../types/components-types';
 import s from './BreadCrumps.module.sass';
 
-const BreadCrumps = ({ currentDir, dirStack, firstName }) => {
-	const dispatch = useDispatch();
+const BreadCrumps: React.FC<IBreadCrumps> = ({
+	currentDir,
+	dirStack,
+	firstName,
+}) => {
+	const dispatch = useAppDispatch();
 
 	return (
 		<div className={s.breadCrumps}>

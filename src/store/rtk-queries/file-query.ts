@@ -1,5 +1,5 @@
-import * as uuid from 'uuid';
 import { createApi } from '@reduxjs/toolkit/query/react';
+import * as uuid from 'uuid';
 
 import baseQuery from './base-query';
 import { addFile, updateDownloadingProgress } from '../slices/file-slice';
@@ -8,22 +8,25 @@ import { changeUploadProgress, uploadFile } from '../slices/upload-slice';
 import axiosInstance from '../../utils/axios';
 import { eventSource } from '../../utils/event-source';
 import { MB } from '../../utils/config';
+import { IFile, ISort } from '../../types/file-types';
 
 const fileAPI = createApi({
 	reducerPath: 'fileAPI',
 	baseQuery,
 	tagTypes: ['fileAPI'],
 	endpoints: builder => ({
-		createDir: builder.mutation({
-			query: body => ({ url: '/file', method: 'POST', body }),
-		}),
-		getFileUrl: builder.mutation({
+		createDir: builder.mutation<IFile, { name: string; parent: string | null }>(
+			{
+				query: body => ({ url: '/file', method: 'POST', body }),
+			}
+		),
+		getFileUrl: builder.mutation<string, string>({
 			query: id => ({ url: `/file/get-url?id=${id}` }),
 		}),
-		deleteFile: builder.mutation({
+		deleteFile: builder.mutation<{ id: string; message: string }, string>({
 			query: id => ({ url: `/file?id=${id}`, method: 'DELETE' }),
 		}),
-		getFiles: builder.mutation({
+		getFiles: builder.mutation<IFile[], { dirId: string | null; sort: ISort }>({
 			query: ({ dirId, sort }) => {
 				let url = `/file?sort=${sort}`;
 				if (dirId) {
@@ -32,7 +35,7 @@ const fileAPI = createApi({
 				return { url };
 			},
 		}),
-		searchFile: builder.mutation({
+		searchFile: builder.mutation<IFile[], string>({
 			query: value => {
 				value = value.trim();
 				let url = `/file/search?search=${value}`;
@@ -40,18 +43,23 @@ const fileAPI = createApi({
 				return { url };
 			},
 		}),
-		downloadFile: builder.mutation({
+		downloadFile: builder.mutation<null, { id: string; name: string }>({
 			queryFn: async ({ id, name }, api) => {
-				let diff = 0;
-				const { data } = await axiosInstance(`file/download?id=${id}`, {
+				let diff = '0';
+				const { data } = await axiosInstance<Blob>(`file/download?id=${id}`, {
 					responseType: 'blob',
 					onDownloadProgress: () => {
-						eventSource.addEventListener(`download-${name}`, ({ data }) => {
-							if (data !== diff) {
-								diff = data;
-								api.dispatch(updateDownloadingProgress({ id, progress: data }));
+						eventSource.addEventListener(
+							`download-${name}`,
+							({ data }: { data: string }) => {
+								if (+data !== +diff) {
+									diff = data;
+									api.dispatch(
+										updateDownloadingProgress({ id, progress: +data })
+									);
+								}
 							}
-						});
+						);
 					},
 				});
 				const link = document.createElement('a');
@@ -61,12 +69,15 @@ const fileAPI = createApi({
 				return { data: null };
 			},
 		}),
-		uploadFiles: builder.mutation({
+		uploadFiles: builder.mutation<
+			null,
+			{ files: File[]; parent: string | null }
+		>({
 			queryFn: async ({ files, parent }, api) => {
-				files.forEach(async file => {
+				files.forEach(async (file: File) => {
 					const size = file.size;
 					if (size > MB * 10) return alert('File cannot be more than 10 MB.');
-					const { data: exists } = await axiosInstance(
+					const { data: exists } = await axiosInstance<boolean>(
 						`file/exist-check?name=${file.name}${
 							parent ? '&parent=' + parent : ''
 						}`
@@ -74,7 +85,7 @@ const fileAPI = createApi({
 					if (exists) {
 						return alert('File already exists');
 					}
-					const id = uuid.v1();
+					const id: string = uuid.v1();
 					api.dispatch(uploadFile({ id, name: file.name, progress: 0 }));
 					const formData = new FormData();
 					if (parent) formData.append('parent', parent);
@@ -83,13 +94,20 @@ const fileAPI = createApi({
 					if (parent) {
 						progressName += parent;
 					}
-					const response = await axiosInstance.post('file/upload', formData, {
-						onUploadProgress: () => {
-							eventSource.addEventListener(progressName, ({ data }) => {
-								api.dispatch(changeUploadProgress({ id, progress: +data }));
-							});
-						},
-					});
+					const response = await axiosInstance.post<IFile>(
+						'file/upload',
+						formData,
+						{
+							onUploadProgress: () => {
+								eventSource.addEventListener(
+									progressName,
+									({ data }: { data: string }) => {
+										api.dispatch(changeUploadProgress({ id, progress: +data }));
+									}
+								);
+							},
+						}
+					);
 					api.dispatch(addFile(response.data));
 				});
 				return { data: null };

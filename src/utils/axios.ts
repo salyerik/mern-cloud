@@ -4,6 +4,7 @@ import { API_URL } from './config';
 const axiosInstance = axios.create({ baseURL: API_URL, withCredentials: true });
 
 axiosInstance.interceptors.request.use(config => {
+	if (!config.headers) return config;
 	config.headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 	return config;
 });
