@@ -25,14 +25,14 @@ const NavBar: React.FC = () => {
 
 	useEffect(() => {
 		searchFile(debouncedValue || '');
-		if (!pathname.includes('/file')) navigate('/file');
+		if (!pathname.includes('/file') && isAuth) navigate('/mern-cloud/file');
 	}, [debouncedValue]);
 
 	return (
 		<div className={s.wrapper}>
 			<div className={s.logo}>
 				<h1 className={s.title}>
-					<Link to={'/'}>Cloud</Link>
+					<Link to={'/mern-cloud'}>Cloud</Link>
 				</h1>
 			</div>
 			<div className={s.content}>
@@ -67,7 +67,7 @@ const NavBar: React.FC = () => {
 								) : null}
 							</label>
 						</div>
-						<Link to={'/profile'} className={s.profileLink}>
+						<Link to={'/mern-cloud/profile'} className={s.profileLink}>
 							<img className={s.img} src={avatar || avatarIcon} alt='avatar' />
 							<span className={s.link}>Profile</span>
 						</Link>
@@ -77,10 +77,10 @@ const NavBar: React.FC = () => {
 					</>
 				) : (
 					<div className={s.links}>
-						<Link className={s.link} to={'/about'}>
+						<Link className={s.link} to={'/mern-cloud/about'}>
 							About
 						</Link>
-						<Link className={s.link} to={'/auth/register'}>
+						<Link className={s.link} to={'/mern-cloud/auth/register'}>
 							Sign Up
 						</Link>
 					</div>

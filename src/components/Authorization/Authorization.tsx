@@ -20,7 +20,7 @@ const Authorization: React.FC = () => {
 	const password = useInput('');
 
 	useEffect(() => {
-		if (params.isSuccess) navigate('/file');
+		if (params.isSuccess) navigate('/mern-cloud/file');
 	}, [params.isSuccess]);
 
 	useEffect(() => {
@@ -34,7 +34,10 @@ const Authorization: React.FC = () => {
 			email: email.value,
 			password: password.value,
 		};
-		authPost({ body, path: isLoginPage ? 'login' : 'register' });
+		authPost({
+			body,
+			path: isLoginPage ? 'login' : 'register',
+		});
 	};
 
 	return (
@@ -54,7 +57,12 @@ const Authorization: React.FC = () => {
 						<span>
 							{isLoginPage ? 'Do not have account?' : 'Already have account?'}
 						</span>
-						<Link to={isLoginPage ? '/auth/register' : '/auth/login'}>
+						<Link
+							to={
+								isLoginPage
+									? '/mern-cloud/auth/register'
+									: '/mern-cloud/auth/login'
+							}>
 							{isLoginPage ? 'Sign Up' : 'Sign In'}
 						</Link>
 					</div>
