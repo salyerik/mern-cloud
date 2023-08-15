@@ -4,13 +4,13 @@ import Panel from '../components/Panel';
 import Profile from '../components/Profile';
 
 export const authRoutes = [
-	{ path: '/file', element: Panel },
-	{ path: '/profile', element: Profile },
+	{ path: '/mern-cloud/file', element: Panel },
+	{ path: '/mern-cloud/profile', element: Profile },
 	{ path: '*', element: Panel },
 ];
 export const notAuthRoutes = [
-	{ path: '/auth/login', element: Authorization },
-	{ path: '/auth/register', element: Authorization },
+	{ path: '/mern-cloud/auth/login', element: Authorization },
+	{ path: '/mern-cloud/auth/register', element: Authorization },
+	{ path: '/mern-cloud/about', element: About },
 	{ path: '*', element: Authorization },
-	{ path: '/about', element: About },
 ];
