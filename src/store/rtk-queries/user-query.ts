@@ -8,7 +8,7 @@ const userAPI = createApi({
 	baseQuery,
 	tagTypes: ['userAPI'],
 	endpoints: builder => ({
-		checkAuth: builder.query<IAuthorized, null>({
+		checkAuth: builder.mutation<IAuthorized, null>({
 			query: () => '/auth',
 		}),
 		authorize: builder.mutation<IAuthorized, IUserAuthParams>({

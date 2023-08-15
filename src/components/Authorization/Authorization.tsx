@@ -66,7 +66,12 @@ const Authorization: React.FC = () => {
 							{isLoginPage ? 'Sign Up' : 'Sign In'}
 						</Link>
 					</div>
-					<button className={s.btn} onClick={authHandler}>
+					<button
+						disabled={params.isLoading}
+						className={[s.btn, params.isLoading ? s.btn__disabled : ''].join(
+							' '
+						)}
+						onClick={authHandler}>
 						{isLoginPage ? 'Sign In' : 'Sign Up'}
 					</button>
 				</div>

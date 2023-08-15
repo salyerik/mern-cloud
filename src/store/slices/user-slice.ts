@@ -1,4 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
+
 import userAPI from '../rtk-queries/user-query';
 import { IAuthorized, IUser, IUserSlice } from '../../types/user-types';
 
@@ -21,6 +23,17 @@ const userSlice = createSlice({
 				state.currentUser = action.payload.user;
 				state.isAuth = true;
 				localStorage.setItem('token', action.payload.token);
+			}
+		);
+		builder.addMatcher(
+			userAPI.endpoints.authorize.matchRejected,
+			(
+				state,
+				action: PayloadAction<
+					{ data: string } | undefined | FetchBaseQueryError
+				>
+			) => {
+				alert(action.payload?.data);
 			}
 		);
 		builder.addMatcher(

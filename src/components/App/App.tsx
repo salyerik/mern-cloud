@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import useTypedSelector from './../../hooks/useTypedSelector';
 import userAPI from '../../store/rtk-queries/user-query';
@@ -7,10 +8,19 @@ import Loader from '../UI/Loader/Loader';
 import './App.sass';
 
 const App: React.FC = () => {
-	const { isLoading } = userAPI.useCheckAuthQuery(null);
+	const [checkAuth, params] = userAPI.useCheckAuthMutation();
 	const isAuth = useTypedSelector(state => state.user.isAuth);
 
-	if (isLoading) return <Loader />;
+	useEffect(() => {
+		if (localStorage.getItem('token')) checkAuth(null);
+	}, []);
+
+	if (params.isLoading)
+		return (
+			<div className='loader'>
+				<Loader />
+			</div>
+		);
 
 	return (
 		<BrowserRouter>
