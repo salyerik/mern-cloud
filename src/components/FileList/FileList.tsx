@@ -7,19 +7,27 @@ import Loader from '../UI/Loader';
 import s from './FileList.module.sass';
 
 const FileList: React.FC = () => {
-	const { files, currentDir, sort, view } = useTypedSelector(
+	const { files, currentDir, sort, view, isSearching } = useTypedSelector(
 		state => state.file
 	);
-	const [getFiles, params] = fileAPI.useGetFilesMutation();
+	const [getFiles] = fileAPI.useGetFilesMutation();
 
 	useEffect(() => {
 		getFiles({ dirId: currentDir.id, sort });
 	}, [currentDir.id, sort]);
 
-	if (params.isLoading) {
+	if (isSearching) {
 		return (
 			<div className={s.loader}>
 				<Loader />
+			</div>
+		);
+	}
+
+	if (files.length === 0) {
+		return (
+			<div className={s.loader}>
+				<h1>No Files</h1>
 			</div>
 		);
 	}

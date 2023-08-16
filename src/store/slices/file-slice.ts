@@ -10,6 +10,7 @@ const initialState: IFileSlice = {
 	dirStack: [],
 	sort: 'type',
 	view: 'list',
+	isSearching: false,
 };
 
 const fileSlice = createSlice({
@@ -102,12 +103,18 @@ const fileSlice = createSlice({
 			}
 		);
 		builder.addMatcher(fileAPI.endpoints.searchFile.matchPending, state => {
+			state.isSearching = true;
+		});
+		builder.addMatcher(fileAPI.endpoints.searchFile.matchRejected, state => {
+			state.isSearching = false;
 			state.currentDir = initialState.currentDir;
 			state.dirStack = [] as IDir[];
+			state.files = [] as IFile[];
 		});
 		builder.addMatcher(
 			fileAPI.endpoints.searchFile.matchFulfilled,
 			(state, action: PayloadAction<IFile[]>) => {
+				state.isSearching = false;
 				state.files = action.payload;
 			}
 		);

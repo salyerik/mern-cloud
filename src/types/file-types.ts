@@ -27,4 +27,5 @@ export interface IFileSlice {
 	dirStack: IDir[];
 	sort: ISort;
 	view: IView;
+	isSearching: boolean;
 }

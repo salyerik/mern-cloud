@@ -24,7 +24,7 @@ const NavBar: React.FC = () => {
 	const [searchFile] = fileAPI.useSearchFileMutation();
 
 	useEffect(() => {
-		if (isAuth) searchFile(debouncedValue || '');
+		if (isAuth && debouncedValue.length) searchFile(debouncedValue || '');
 		if (!pathname.includes('/file') && isAuth) navigate('/mern-cloud/file');
 	}, [debouncedValue]);
 

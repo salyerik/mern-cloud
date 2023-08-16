@@ -6,7 +6,7 @@ const isLocalhost = Boolean(
 		)
 );
 
-export const API_URL = isLocalhost
+export const API_URL = true
 	? 'http://localhost:3030/api'
 	: 'https://mern-cloud-api.up.railway.app/api';
 
