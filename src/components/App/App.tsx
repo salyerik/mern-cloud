@@ -8,14 +8,14 @@ import Loader from '../UI/Loader/Loader';
 import './App.sass';
 
 const App: React.FC = () => {
-	const [checkAuth, params] = userAPI.useCheckAuthMutation();
+	const [checkAuth, checkParams] = userAPI.useCheckAuthMutation();
 	const isAuth = useTypedSelector(state => state.user.isAuth);
 
 	useEffect(() => {
 		if (localStorage.getItem('token')) checkAuth(null);
 	}, []);
 
-	if (params.isLoading)
+	if (checkParams.isLoading)
 		return (
 			<div className='loader'>
 				<Loader />

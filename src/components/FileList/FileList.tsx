@@ -5,6 +5,7 @@ import fileAPI from '../../store/rtk-queries/file-query';
 import File from '../File/File';
 import Loader from '../UI/Loader';
 import s from './FileList.module.sass';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 const FileList: React.FC = () => {
 	const { files, currentDir, sort, view, isSearching } = useTypedSelector(

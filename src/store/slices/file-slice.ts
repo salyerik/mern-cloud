@@ -71,6 +71,17 @@ const fileSlice = createSlice({
 			}
 		);
 		builder.addMatcher(
+			fileAPI.endpoints.createDir.matchRejected,
+			(
+				state,
+				action: PayloadAction<
+					{ data: string } | undefined | FetchBaseQueryError
+				>
+			) => {
+				alert(action.payload?.data);
+			}
+		);
+		builder.addMatcher(
 			fileAPI.endpoints.getFileUrl.matchFulfilled,
 			(state, action: PayloadAction<string>) => {
 				const link = document.createElement('a');

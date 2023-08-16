@@ -10,20 +10,18 @@ import s from './Popup.module.sass';
 
 const Popup: React.FC = () => {
 	const dispatch = useAppDispatch();
-	const [isCreateBtnClicked, setCreateBtnClicked] = useState(false);
 	const currentDir = useTypedSelector(state => state.file.currentDir);
 	const [folderName, setFolderName] = useState('');
-	const [createDir] = fileAPI.useCreateDirMutation();
+	const [createDir, createDirParams] = fileAPI.useCreateDirMutation();
 
 	const createBtnHandler = () => {
 		if (folderName.trim().length === 0) {
 			return alert('Folder name cannot be empty');
 		}
-		setCreateBtnClicked(true);
 		createDir({ name: folderName, parent: currentDir.id });
 	};
 	const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (!isCreateBtnClicked) setFolderName(e.target.value);
+		if (!createDirParams.isLoading) setFolderName(e.target.value);
 	};
 
 	return (
@@ -45,11 +43,11 @@ const Popup: React.FC = () => {
 						placeholder='Enter folder name...'
 					/>
 					<button
-						disabled={isCreateBtnClicked}
+						disabled={createDirParams.isLoading}
 						onClick={createBtnHandler}
 						className={[
 							s.createBtn,
-							isCreateBtnClicked && s.createBtnActive,
+							createDirParams.isLoading && s.createBtnActive,
 						].join(' ')}>
 						Create
 					</button>

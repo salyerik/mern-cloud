@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import useAppDispatch from '../../hooks/useAppDispatch';
 import useTypedSelector from '../../hooks/useTypedSelector';
@@ -14,32 +14,27 @@ import s from './File.module.sass';
 const File: React.FC<{ file: IFile }> = ({ file }) => {
 	const dispatch = useAppDispatch();
 	const view = useTypedSelector(state => state.file.view);
-	const [isBtnClicked, setBtnClicked] = useState(false);
 	const [openFile] = fileAPI.useGetFileUrlMutation();
-	const [downloadFile] = fileAPI.useDownloadFileMutation();
+	const [downloadFile, downloadParams] = fileAPI.useDownloadFileMutation();
 	const [deleteFile, deleteParams] = fileAPI.useDeleteFileMutation();
 
 	useEffect(() => {
-		if (deleteParams.isError) setBtnClicked(false);
-		if (file.downloadProgress) setBtnClicked(true);
-		if (file.downloadProgress === 100) {
+		if (downloadParams.isSuccess) {
 			dispatch(resetDownload(file._id));
-			setBtnClicked(false);
 		}
-	}, [file.downloadProgress, deleteParams.isError]);
+	}, [downloadParams.isSuccess]);
 
 	const openDirHandler = () => {
-		if (!isBtnClicked) {
+		if (!deleteParams.isLoading) {
 			dispatch(openDir({ id: file._id, name: file.name }));
 		}
 	};
 	const openFileHandler = () => {
-		if (!isBtnClicked) {
+		if (!deleteParams.isLoading) {
 			openFile(file._id);
 		}
 	};
 	const deleteFileHandler = () => {
-		setBtnClicked(true);
 		deleteFile(file._id);
 	};
 
@@ -61,10 +56,11 @@ const File: React.FC<{ file: IFile }> = ({ file }) => {
 				</h6>
 				{file.type !== 'dir' && (
 					<button
-						disabled={!!file.downloadProgress || isBtnClicked}
+						disabled={downloadParams.isLoading || deleteParams.isLoading}
 						className={[
 							s.download,
-							isBtnClicked && s.downloadDisabled,
+							(deleteParams.isLoading || downloadParams.isLoading) &&
+								s.downloadDisabled,
 							file.downloadProgress && s.downloadActive,
 						].join(' ')}
 						onClick={() => downloadFile({ id: file._id, name: file.name })}>
@@ -72,14 +68,21 @@ const File: React.FC<{ file: IFile }> = ({ file }) => {
 					</button>
 				)}
 				<button
-					disabled={isBtnClicked}
-					className={[s.download, isBtnClicked && s.deleteActive].join(' ')}
+					disabled={deleteParams.isLoading}
+					className={[
+						s.download,
+						deleteParams.isLoading && s.deleteActive,
+					].join(' ')}
 					onClick={file.type === 'dir' ? openDirHandler : openFileHandler}>
 					Open
 				</button>
 				<button
-					className={[s.delete, isBtnClicked && s.deleteActive].join(' ')}
-					disabled={isBtnClicked}
+					className={[
+						s.delete,
+						(deleteParams.isLoading || downloadParams.isLoading) &&
+							s.deleteActive,
+					].join(' ')}
+					disabled={deleteParams.isLoading || downloadParams.isLoading}
 					onClick={deleteFileHandler}>
 					Delete
 				</button>
@@ -110,11 +113,12 @@ const File: React.FC<{ file: IFile }> = ({ file }) => {
 				<div className={s.plate__btns}>
 					{file.type !== 'dir' && (
 						<button
-							disabled={!!file.downloadProgress || isBtnClicked}
+							disabled={downloadParams.isLoading || deleteParams.isLoading}
 							className={[
 								s.download,
 								s.plate__download,
-								isBtnClicked && s.downloadDisabled,
+								(deleteParams.isLoading || downloadParams.isLoading) &&
+									s.downloadDisabled,
 								file.downloadProgress && s.downloadActive,
 							].join(' ')}
 							onClick={() => downloadFile({ id: file._id, name: file.name })}>
@@ -122,12 +126,13 @@ const File: React.FC<{ file: IFile }> = ({ file }) => {
 						</button>
 					)}
 					<button
-						disabled={isBtnClicked}
+						disabled={deleteParams.isLoading || downloadParams.isLoading}
 						onClick={deleteFileHandler}
 						className={[
 							s.delete,
 							s.plate__download,
-							isBtnClicked && s.deleteActive,
+							(deleteParams.isLoading || downloadParams.isLoading) &&
+								s.deleteActive,
 						].join(' ')}>
 						Delete
 					</button>
