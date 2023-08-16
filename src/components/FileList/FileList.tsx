@@ -10,13 +10,13 @@ const FileList: React.FC = () => {
 	const { files, currentDir, sort, view, isSearching } = useTypedSelector(
 		state => state.file
 	);
-	const [getFiles] = fileAPI.useGetFilesMutation();
+	const [getFiles, params] = fileAPI.useGetFilesMutation();
 
 	useEffect(() => {
 		getFiles({ dirId: currentDir.id, sort });
 	}, [currentDir.id, sort]);
 
-	if (isSearching) {
+	if (isSearching || params.isLoading) {
 		return (
 			<div className={s.loader}>
 				<Loader />
