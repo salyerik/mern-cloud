@@ -1,7 +1,14 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 import fileAPI from '../rtk-queries/file-query';
-import { IDir, IFile, IFileSlice, ISort, IView } from '../../types/file-types';
+import {
+	IDir,
+	IFile,
+	IFileSlice,
+	IRejectedPayload,
+	ISort,
+	IView,
+} from '../../types/file-types';
 
 const initialState: IFileSlice = {
 	isPopupVisible: false,
@@ -72,18 +79,13 @@ const fileSlice = createSlice({
 		);
 		builder.addMatcher(
 			fileAPI.endpoints.createDir.matchRejected,
-			(
-				state,
-				action: PayloadAction<
-					{ data: string } | undefined | FetchBaseQueryError
-				>
-			) => {
+			(_, action: PayloadAction<IRejectedPayload>) => {
 				alert(action.payload?.data);
 			}
 		);
 		builder.addMatcher(
 			fileAPI.endpoints.getFileUrl.matchFulfilled,
-			(state, action: PayloadAction<string>) => {
+			(_, action: PayloadAction<string>) => {
 				const link = document.createElement('a');
 				link.href = action.payload;
 				link.target = '_blank';
@@ -98,12 +100,7 @@ const fileSlice = createSlice({
 		);
 		builder.addMatcher(
 			fileAPI.endpoints.deleteFile.matchRejected,
-			(
-				state,
-				action: PayloadAction<
-					{ data: string } | undefined | FetchBaseQueryError
-				>
-			) => {
+			(_, action: PayloadAction<IRejectedPayload>) => {
 				alert(action.payload?.data);
 			}
 		);
@@ -111,6 +108,12 @@ const fileSlice = createSlice({
 			fileAPI.endpoints.getFiles.matchFulfilled,
 			(state, action: PayloadAction<IFile[]>) => {
 				state.files = action.payload;
+			}
+		);
+		builder.addMatcher(
+			fileAPI.endpoints.getFiles.matchRejected,
+			(_, action: PayloadAction<IRejectedPayload>) => {
+				alert(action.payload?.data);
 			}
 		);
 		builder.addMatcher(fileAPI.endpoints.searchFile.matchPending, state => {

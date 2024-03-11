@@ -8,7 +8,7 @@ const isLocalhost = Boolean(
 
 export const API_URL = isLocalhost
 	? 'http://localhost:3030/api'
-	: 'https://mern-cloud-api.up.railway.app/api';
+	: 'https://mern-cloud-e244c9d20731.herokuapp.com/api';
 
 export const MB =
 	window.navigator.platform.indexOf('Mac') === 0 ? 1024 * 1024 : 1024 * 1024;

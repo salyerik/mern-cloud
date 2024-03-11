@@ -27,7 +27,7 @@ const userAPI = createApi({
 		uploadAvatar: builder.mutation<IAuthorized, File>({
 			query: file => {
 				if (file.size > 2 * MB) {
-					const alertText = 'Picture size must be less than 2mb';
+					const alertText = 'Avatar size must be less than 2mb';
 					alert(alertText);
 					throw alertText;
 				}

@@ -76,7 +76,7 @@ const fileAPI = createApi({
 			queryFn: async ({ files, parent }, api) => {
 				files.forEach(async (file: File) => {
 					const size = file.size;
-					if (size > MB * 10) return alert('File cannot be more than 10 MB.');
+					if (size > MB * 10) return alert('File cannot be more than 10 MB');
 					const { data: exists } = await axiosInstance<boolean>(
 						`file/exist-check?name=${file.name}${
 							parent ? '&parent=' + parent : ''

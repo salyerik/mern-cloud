@@ -1,3 +1,5 @@
+import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
+
 export type IView = 'list' | 'plate';
 export type ISort = 'type' | 'size' | 'name' | 'date';
 
@@ -29,3 +31,8 @@ export interface IFileSlice {
 	view: IView;
 	isSearching: boolean;
 }
+
+export type IRejectedPayload =
+	| { data: string }
+	| undefined
+	| FetchBaseQueryError;

@@ -5,19 +5,18 @@ import fileAPI from '../../store/rtk-queries/file-query';
 import File from '../File/File';
 import Loader from '../UI/Loader';
 import s from './FileList.module.sass';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 const FileList: React.FC = () => {
 	const { files, currentDir, sort, view, isSearching } = useTypedSelector(
 		state => state.file
 	);
-	const [getFiles, params] = fileAPI.useGetFilesMutation();
+	const [getFiles, getFilesParams] = fileAPI.useGetFilesMutation();
 
 	useEffect(() => {
 		getFiles({ dirId: currentDir.id, sort });
 	}, [currentDir.id, sort]);
 
-	if (isSearching || params.isLoading) {
+	if (isSearching || getFilesParams.isLoading) {
 		return (
 			<div className={s.loader}>
 				<Loader />

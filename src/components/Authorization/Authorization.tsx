@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import userAPI from '../../store/rtk-queries/user-query';
 import useInput from '../../hooks/useInput';
@@ -8,20 +8,15 @@ import Input from '../UI/Input';
 import s from './Authorization.module.sass';
 
 const Authorization: React.FC = () => {
-	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const [isLoginPage, setLoginPage] = useState(true);
 
-	const [authPost, params] = userAPI.useAuthorizeMutation();
+	const [authPost, authParams] = userAPI.useAuthorizeMutation();
 
 	const firstName = useInput('');
 	const lastName = useInput('');
 	const email = useInput('');
 	const password = useInput('');
-
-	useEffect(() => {
-		if (params.isSuccess) navigate('/mern-cloud');
-	}, [params.isSuccess]);
 
 	useEffect(() => {
 		setLoginPage(pathname.includes('login'));
@@ -62,10 +57,11 @@ const Authorization: React.FC = () => {
 						</Link>
 					</div>
 					<button
-						disabled={params.isLoading}
-						className={[s.btn, params.isLoading ? s.btn__disabled : ''].join(
-							' '
-						)}
+						disabled={authParams.isLoading}
+						className={[
+							s.btn,
+							authParams.isLoading ? s.btn__disabled : '',
+						].join(' ')}
 						onClick={authHandler}>
 						{isLoginPage ? 'Sign In' : 'Sign Up'}
 					</button>

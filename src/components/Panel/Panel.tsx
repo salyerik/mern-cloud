@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import useAppDispatch from '../../hooks/useAppDispatch';
 import useTypedSelector from '../../hooks/useTypedSelector';
@@ -22,6 +23,7 @@ const Panel: React.FC = () => {
 	const currentUser = useTypedSelector(state => state.user.currentUser);
 	const file = useTypedSelector(state => state.file);
 	const { isUploaderVisible } = useTypedSelector(state => state.upload);
+	const navigate = useNavigate();
 	const [dragEnter, setDragEnter] = useState(false);
 	const [uploadFiles] = fileAPI.useUploadFilesMutation();
 
@@ -46,6 +48,10 @@ const Panel: React.FC = () => {
 		setDragEnter(false);
 		uploadFiles({ files: [...e.dataTransfer.files], parent: currentDir.id });
 	};
+
+	useEffect(() => {
+		navigate('/mern-cloud');
+	}, []);
 
 	return (
 		<section

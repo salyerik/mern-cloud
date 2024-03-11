@@ -2,6 +2,7 @@ export interface IUser {
 	firstName: string;
 	lastName: string;
 	avatar: string | null;
+	isMailConfirmed: boolean;
 }
 
 export interface IAuthorized {

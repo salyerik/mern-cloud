@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 import useTypedSelector from '../../hooks/useTypedSelector';
@@ -14,18 +14,20 @@ import s from './NavBar.module.sass';
 const NavBar: React.FC = () => {
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
-	const { pathname } = useLocation();
 	const [searchValue, setSearchValue] = useState('');
 	const [isSearchActive, setSearchActive] = useState(false);
 	const { isAuth, currentUser } = useTypedSelector(state => state.user);
 	const { avatar } = currentUser;
 
 	const debouncedValue = useDebounce(searchValue);
-	const [searchFile] = fileAPI.useSearchFileMutation();
+	const [searchFile, searchParams] = fileAPI.useSearchFileMutation();
 
 	useEffect(() => {
-		if (isAuth && isSearchActive) searchFile(debouncedValue || '');
-		if (!pathname.includes('/file') && isAuth) navigate('/mern-cloud');
+		if (searchParams.isLoading) navigate('/mern-cloud');
+	}, [searchParams.isLoading]);
+
+	useEffect(() => {
+		if (isSearchActive) searchFile(debouncedValue || '');
 	}, [debouncedValue]);
 
 	return (
